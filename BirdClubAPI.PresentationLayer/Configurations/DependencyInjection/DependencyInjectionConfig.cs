@@ -1,9 +1,9 @@
-﻿using BirdClubAPI.DataAccessLayer.Context;
+﻿using BirdClubAPI.BusinessLayer.Services.Newsfeed;
+using BirdClubAPI.DataAccessLayer.Context;
+using BirdClubAPI.DataAccessLayer.Repositories.Newsfeed;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 
-namespace BirdClubAPI.BusinessLayer.Configurations.DependencyInjection
+namespace BirdClubAPI.Core.DependencyInjection
 {
     public static class DependencyInjectionConfig
     {
@@ -12,6 +12,9 @@ namespace BirdClubAPI.BusinessLayer.Configurations.DependencyInjection
             services.AddDbContext<DbContext, BirdClubContext>(opts => opts.UseSqlServer(
                 configuration.GetConnectionString("BirdClub")
             ));
+
+            services.AddScoped<INewsfeedService, NewsfeedService>();
+            services.AddTransient<INewsfeedRepository, NewsfeedRepository>(); 
 
             return services;
         }

@@ -3,17 +3,21 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.33627.172
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BirdClubAPI.PresentationLayer", "BirdClubAPI.PresentationLayer\BirdClubAPI.PresentationLayer.csproj", "{E398D65C-0997-40C1-B054-04DCE0AA6C6E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BirdClubAPI.PresentationLayer", "BirdClubAPI.PresentationLayer\BirdClubAPI.PresentationLayer.csproj", "{E398D65C-0997-40C1-B054-04DCE0AA6C6E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BirdClubAPI.BusinessLayer", "BirdClubAPI.BusinessLayer\BirdClubAPI.BusinessLayer.csproj", "{EA9D4F27-7A61-4062-AB1A-BA4349BA1B5E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BirdClubAPI.BusinessLayer", "BirdClubAPI.BusinessLayer\BirdClubAPI.BusinessLayer.csproj", "{EA9D4F27-7A61-4062-AB1A-BA4349BA1B5E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BirdClubAPI.DataAccessLayer", "BirdClubAPI.DataAccessLayer\BirdClubAPI.DataAccessLayer.csproj", "{2EC786C4-F897-4789-B048-9DC90CA35B4D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BirdClubAPI.DataAccessLayer", "BirdClubAPI.DataAccessLayer\BirdClubAPI.DataAccessLayer.csproj", "{2EC786C4-F897-4789-B048-9DC90CA35B4D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "3. DataAccessLayer", "3. DataAccessLayer", "{0D998F0D-0A59-4F8F-A6F9-220EA4F5D7B5}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "2. BusinessLayer", "2. BusinessLayer", "{F12E02C3-2257-41AC-B2C0-6037226E0385}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1. PresentationLayer", "1. PresentationLayer", "{B10C7C18-B874-4DD5-83EC-E0992E53A4A6}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "4. Domain", "4. Domain", "{547EEE7B-1872-468A-A555-F6505E5AA776}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BirdClubAPI.Domain", "BirdClubAPI.Domain\BirdClubAPI.Domain.csproj", "{3B2BE903-A5E0-40CE-A037-2840BBA08D6F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +37,10 @@ Global
 		{2EC786C4-F897-4789-B048-9DC90CA35B4D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2EC786C4-F897-4789-B048-9DC90CA35B4D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2EC786C4-F897-4789-B048-9DC90CA35B4D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3B2BE903-A5E0-40CE-A037-2840BBA08D6F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3B2BE903-A5E0-40CE-A037-2840BBA08D6F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3B2BE903-A5E0-40CE-A037-2840BBA08D6F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3B2BE903-A5E0-40CE-A037-2840BBA08D6F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -41,6 +49,7 @@ Global
 		{E398D65C-0997-40C1-B054-04DCE0AA6C6E} = {B10C7C18-B874-4DD5-83EC-E0992E53A4A6}
 		{EA9D4F27-7A61-4062-AB1A-BA4349BA1B5E} = {F12E02C3-2257-41AC-B2C0-6037226E0385}
 		{2EC786C4-F897-4789-B048-9DC90CA35B4D} = {0D998F0D-0A59-4F8F-A6F9-220EA4F5D7B5}
+		{3B2BE903-A5E0-40CE-A037-2840BBA08D6F} = {547EEE7B-1872-468A-A555-F6505E5AA776}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {08125D28-5D86-4302-B496-3D8FC3731085}
