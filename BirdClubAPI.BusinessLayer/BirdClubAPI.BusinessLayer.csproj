@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BirdClubAPI.DataAccessLayer\BirdClubAPI.DataAccessLayer.csproj" />
+    <ProjectReference Include="..\BirdClubAPI.Domain\BirdClubAPI.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Helpers\" />
+    <Folder Include="Commons\" />
+    <Folder Include="Services\" />
+  </ItemGroup>
+
+</Project>
