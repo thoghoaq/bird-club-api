@@ -7,14 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\BirdClubAPI.DataAccessLayer\BirdClubAPI.DataAccessLayer.csproj" />
-    <ProjectReference Include="..\BirdClubAPI.Domain\BirdClubAPI.Domain.csproj" />
+    <Folder Include="Helpers\" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Helpers\" />
-    <Folder Include="Commons\" />
-    <Folder Include="Services\" />
+    <ProjectReference Include="..\BirdClubAPI.DataAccessLayer\BirdClubAPI.DataAccessLayer.csproj" />
+    <ProjectReference Include="..\BirdClubAPI.Domain\BirdClubAPI.Domain.csproj" />
   </ItemGroup>
 
 </Project>
