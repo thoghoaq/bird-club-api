@@ -1,6 +1,6 @@
 ﻿using BirdClubAPI.BusinessLayer.Services.Auth;
 using BirdClubAPI.Domain.DTOs.Request.Auth;
-using Microsoft.AspNetCore.Http;
+using BirdClubAPI.Domain.DTOs.View.Common;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
@@ -28,6 +28,23 @@ namespace BirdClubAPI.PresentationLayer.Controllers
             else
             {
                 return Unauthorized(result.Key);
+            }
+        }
+
+        [HttpPost("register")]
+        public IActionResult Register(RegisterRequestModel requestModel)
+        {
+            var result = _authService.Register(requestModel);
+            if (result == true)
+            {
+                return Ok();
+            } else
+            {
+                return BadRequest(new MessageViewModel
+                {
+                    StatusCode = HttpStatusCode.BadRequest,
+                    Message = "Invalid user"
+                });
             }
         }
     }

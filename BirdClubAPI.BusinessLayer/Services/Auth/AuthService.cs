@@ -5,6 +5,7 @@ using BirdClubAPI.Domain.DTOs.Request.Auth;
 using BirdClubAPI.Domain.DTOs.View.Auth;
 using BirdClubAPI.Domain.DTOs.View.Common;
 using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
 using System.Net;
 
 namespace BirdClubAPI.BusinessLayer.Services.Auth
@@ -39,6 +40,19 @@ namespace BirdClubAPI.BusinessLayer.Services.Auth
             var jwtToken = TokenManager.GenerateJwtToken(user.Email, user.DisplayName, user.UserType, user.Id, _configuration);
             viewModel.Value.JwtToken = jwtToken;
             return viewModel;
+        }
+
+        public bool Register(RegisterRequestModel requestModel)
+        {
+            // Check condition
+            if (requestModel.Email.IsNullOrEmpty() || requestModel.Password.Length < 8)
+            {
+                return false;
+            }
+
+            var model = _userRepository.Create(requestModel);
+            if (model == null) return false;
+            return true;
         }
     }
 }
