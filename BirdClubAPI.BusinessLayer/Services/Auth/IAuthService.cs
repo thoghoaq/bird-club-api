@@ -7,5 +7,6 @@ namespace BirdClubAPI.BusinessLayer.Services.Auth
     public interface IAuthService
     {
         KeyValuePair<MessageViewModel, AuthViewModel?> Login (LoginFormRequestModel loginFormRequest);
+        bool Register(RegisterRequestModel requestModel);
     }
 }
