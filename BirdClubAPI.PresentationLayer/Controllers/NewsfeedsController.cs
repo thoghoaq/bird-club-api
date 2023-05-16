@@ -1,4 +1,5 @@
 ﻿using BirdClubAPI.BusinessLayer.Services.Newsfeed;
+using BirdClubAPI.Domain.DTOs.Request.Auth;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BirdClubAPI.PresentationLayer.Controllers
@@ -19,6 +20,11 @@ namespace BirdClubAPI.PresentationLayer.Controllers
         /// </summary>
         [HttpGet]
         public ActionResult GetNewsfeeds() {
+            return Ok(_newsfeedService.GetNewsfeeds());
+        }
+        [HttpPost]
+        public ActionResult Get(LoginFormRequestModel model)
+        {
             return Ok(_newsfeedService.GetNewsfeeds());
         }
     }
