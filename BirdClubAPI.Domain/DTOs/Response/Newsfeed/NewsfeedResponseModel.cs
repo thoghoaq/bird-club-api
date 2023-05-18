@@ -8,6 +8,7 @@ namespace BirdClubAPI.Domain.DTOs.Response.Newsfeed
     public class NewsfeedResponseModel
     {
         public int Id { get; set; }
+        public DateTime PublicationTime { get; set; }
         public MemberResponseModel Owner { get; set; } = null!;
         public BlogResponseModel? Blog { get; set; }
         public RecordResponseModel? Record { get; set; }

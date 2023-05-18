@@ -17,14 +17,20 @@ namespace BirdClubAPI.DataAccessLayer.Repositories.Newsfeed
             _mapper = mapper;
         }
 
-        public List<NewsfeedResponseModel> GetNewsfeeds()
+        public List<NewsfeedResponseModel> GetNewsfeeds(int limit, int page, int size)
         {
             var response = _mapper.ProjectTo<NewsfeedResponseModel>(_context.Newsfeeds
+                .Take(limit > 0 ? limit : int.MaxValue)
+                .Skip(page > 0 ? (page - 1) * size: 0)
+                .Take(size)
+                .OrderByDescending(e => e.PublicationTime)
                 .Include(e => e.Owner)
                     .ThenInclude(e => e.User)
                 .Include(e => e.Blog)
                 .Include(e => e.Record)
-                    .ThenInclude(e => e.Bird)).ToList();
+                    .ThenInclude(e => e.Bird)
+                )
+                .ToList();
             return response;
         }
     }
