@@ -16,9 +16,9 @@ namespace BirdClubAPI.BusinessLayer.Services.Newsfeed
             _mapper = mapper;
         }
 
-        public List<NewsfeedViewModel> GetNewsfeeds()
+        public List<NewsfeedViewModel> GetNewsfeeds(int limit, int page, int size)
         {
-            var result = _mapper.Map<List<NewsfeedViewModel>>(_newsfeedRepository.GetNewsfeeds()); 
+            var result = _mapper.Map<List<NewsfeedViewModel>>(_newsfeedRepository.GetNewsfeeds(limit, page, size)); 
             foreach (var item in result)
             {
                 if (item.Blog != null) item.NewsfeedType = NewsfeedTypeEnum.BLOG;
