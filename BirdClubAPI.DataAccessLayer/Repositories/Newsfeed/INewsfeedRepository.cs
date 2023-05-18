@@ -4,6 +4,6 @@ namespace BirdClubAPI.DataAccessLayer.Repositories.Newsfeed
 {
     public interface INewsfeedRepository
     {
-        List<NewsfeedResponseModel> GetNewsfeeds();
+        List<NewsfeedResponseModel> GetNewsfeeds(int limit, int page, int size);
     }
 }

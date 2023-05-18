@@ -1,5 +1,4 @@
 ﻿using BirdClubAPI.BusinessLayer.Services.Newsfeed;
-using BirdClubAPI.Domain.DTOs.Request.Auth;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BirdClubAPI.PresentationLayer.Controllers
@@ -19,13 +18,8 @@ namespace BirdClubAPI.PresentationLayer.Controllers
         /// Get newsfeeds, newsfeedType = 0 (BLOG), newsfeedType = 1 (RECORD)
         /// </summary>
         [HttpGet]
-        public ActionResult GetNewsfeeds() {
-            return Ok(_newsfeedService.GetNewsfeeds());
-        }
-        [HttpPost]
-        public ActionResult Get(LoginFormRequestModel model)
-        {
-            return Ok(_newsfeedService.GetNewsfeeds());
+        public ActionResult GetNewsfeeds(int limit, int page, int size) {
+            return Ok(_newsfeedService.GetNewsfeeds(limit, page, size));
         }
     }
 }
