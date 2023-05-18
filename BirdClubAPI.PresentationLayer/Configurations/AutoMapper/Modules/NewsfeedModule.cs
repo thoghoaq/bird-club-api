@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using BirdClubAPI.Domain.Commons.Enums;
+using BirdClubAPI.Domain.DTOs.Response.Blog;
 using BirdClubAPI.Domain.DTOs.Response.Newsfeed;
 using BirdClubAPI.Domain.DTOs.View.Newsfeed;
 using BirdClubAPI.Domain.Entities;
