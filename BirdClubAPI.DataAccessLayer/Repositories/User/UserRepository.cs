@@ -36,7 +36,16 @@ namespace BirdClubAPI.DataAccessLayer.Repositories.User
 
         public Domain.Entities.User? Get(string email, string password)
         {
-            var user = _context.Users.SingleOrDefault(e => e.Email.Equals(email) && e.Password.Equals(password));
+            var user = _context.Users
+                .Select(e => new Domain.Entities.User
+                {
+                    Id = e.Id,
+                    Email = e.Email,
+                    DisplayName= e.DisplayName,
+                    Password = e.Password,
+                    UserType = e.UserType,
+                    Member = e.Member
+                }).SingleOrDefault(e => e.Email.Equals(email) && e.Password.Equals(password));
             return user;
         }
     }

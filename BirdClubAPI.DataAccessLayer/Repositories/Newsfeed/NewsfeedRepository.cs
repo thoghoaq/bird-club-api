@@ -1,5 +1,8 @@
 ﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using BirdClubAPI.DataAccessLayer.Context;
+using BirdClubAPI.Domain.DTOs.Response.Blog;
+using BirdClubAPI.Domain.DTOs.Response.Member;
 using BirdClubAPI.Domain.DTOs.Response.Newsfeed;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
@@ -15,6 +18,38 @@ namespace BirdClubAPI.DataAccessLayer.Repositories.Newsfeed
         {
             _context = context;
             _mapper = mapper;
+        }
+
+        public Domain.Entities.Newsfeed? Create(Domain.Entities.Newsfeed newsfeed)
+        {
+            try
+            {
+                var row = _context.Add(newsfeed);
+                _context.SaveChanges();
+                return row.Entity;
+            } catch
+            {
+                return null;
+            }
+        }
+
+        public BlogDetailResponseModel? GetBlogs(int id)
+        {
+            var response = _context.Newsfeeds
+                .Where(x => x.Id == id)
+                .Select(e => new BlogDetailResponseModel {
+                Id = e.Id,
+                PublicationTime = e.PublicationTime,
+                Title = e.Blog != null ? e.Blog.Title : string.Empty,
+                Content = e.Blog != null ? e.Blog.Content : null,
+                Owner = new MemberResponseModel
+                {
+                    Avatar = e.Owner.Avatar,
+                    DisplayName = e.Owner.User.DisplayName,
+                    MemberId = e.OwnerId
+                }
+            }).FirstOrDefault();
+            return response;
         }
 
         public List<NewsfeedResponseModel> GetNewsfeeds(int limit, int page, int size)
