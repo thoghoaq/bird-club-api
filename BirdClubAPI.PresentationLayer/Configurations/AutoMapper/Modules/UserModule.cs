@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using BirdClubAPI.Domain.DTOs.Response.User;
 using BirdClubAPI.Domain.DTOs.View.Auth;
 using BirdClubAPI.Domain.Entities;
 
@@ -12,6 +13,7 @@ namespace BirdClubAPI.PresentationLayer.Configurations.AutoMapper.Modules
                 .ForMember(dest => dest.JwtToken, opts => opts.Ignore())
                 .ForMember(dest => dest.UserId, opts => opts.MapFrom(src => src.Id))
                 .ReverseMap();
+            mc.CreateMap<User, UserResponseModel>().ReverseMap();
         }
     }
 }

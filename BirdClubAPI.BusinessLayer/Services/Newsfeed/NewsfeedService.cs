@@ -16,15 +16,15 @@ namespace BirdClubAPI.BusinessLayer.Services.Newsfeed
             _mapper = mapper;
         }
 
-        public List<NewsfeedViewModel> GetNewsfeeds(int limit, int page, int size)
+        public NewsfeedViewModel GetNewsfeeds(int limit, int page, int size)
         {
-            var result = _mapper.Map<List<NewsfeedViewModel>>(_newsfeedRepository.GetNewsfeeds(limit, page, size)); 
-            foreach (var item in result)
+            var newsfeeds = _newsfeedRepository.GetNewsfeeds(limit, page, size);
+            var response = new NewsfeedViewModel
             {
-                if (item.Blog != null) item.NewsfeedType = NewsfeedTypeEnum.BLOG;
-                else if (item.Record != null) item.NewsfeedType = NewsfeedTypeEnum.RECORD;
+                Total = newsfeeds.Count,
+                Newsfeeds = newsfeeds
             };
-            return result;
+            return response;
         }
     }
 }

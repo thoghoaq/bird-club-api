@@ -1,4 +1,6 @@
-﻿namespace BirdClubAPI.Domain.DTOs.Response.Member
+﻿using BirdClubAPI.Domain.DTOs.Response.User;
+
+namespace BirdClubAPI.Domain.DTOs.Response.Member
 {
     public class MemberResponseModel
     {

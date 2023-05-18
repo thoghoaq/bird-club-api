@@ -5,6 +5,6 @@ namespace BirdClubAPI.BusinessLayer.Services.Newsfeed
 {
     public interface INewsfeedService
     {
-        List<NewsfeedViewModel> GetNewsfeeds(int limit, int page, int size);
+        NewsfeedViewModel GetNewsfeeds(int limit, int page, int size);
     }
 }

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using BirdClubAPI.Domain.Commons.Enums;
 using BirdClubAPI.Domain.DTOs.Response.Newsfeed;
 using BirdClubAPI.Domain.DTOs.View.Newsfeed;
 using BirdClubAPI.Domain.Entities;
@@ -9,8 +10,9 @@ namespace BirdClubAPI.PresentationLayer.Configurations.AutoMapper.Modules
     {
         public static void ConfigNewsfeedModule(this IMapperConfigurationExpression mc)
         {
-            mc.CreateMap<Newsfeed, NewsfeedResponseModel>().ReverseMap();
-            mc.CreateMap<NewsfeedResponseModel, NewsfeedViewModel>().ReverseMap();
+            mc.CreateMap<Newsfeed, NewsfeedResponseModel>()
+                .ForMember(dest => dest.NewsfeedType, opts => opts.MapFrom(src => src.Blog != null ? NewsfeedTypeEnum.BLOG : NewsfeedTypeEnum.RECORD))
+                .ReverseMap();
         }
     }
 }
