@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using BirdClubAPI.DataAccessLayer.Repositories.Activity;
 using BirdClubAPI.Domain.DTOs.Request.Activity;
+using BirdClubAPI.Domain.DTOs.Response.Activity;
 using BirdClubAPI.Domain.DTOs.View.Acitivity;
 using BirdClubAPI.Domain.DTOs.View.Common;
 
@@ -42,6 +43,12 @@ namespace BirdClubAPI.BusinessLayer.Services.Activity
                 },
                 _mapper.Map<AcitivityCreateViewModel>(result)
                 );
+        }
+
+        public List<AcitivityViewModel> GetActivities()
+        {
+            List<ActivityResponseModel> activities = _activityRepository.GetActivities();
+            return _mapper.Map<List<AcitivityViewModel>>(activities);
         }
     }
 }

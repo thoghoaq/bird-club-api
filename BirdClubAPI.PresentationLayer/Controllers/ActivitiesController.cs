@@ -1,6 +1,8 @@
 ﻿using BirdClubAPI.BusinessLayer.Services.Activity;
 using BirdClubAPI.Domain.DTOs.Request.Activity;
+using BirdClubAPI.Domain.DTOs.View.Acitivity;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 using System.Net;
 
 namespace BirdClubAPI.PresentationLayer.Controllers
@@ -28,6 +30,16 @@ namespace BirdClubAPI.PresentationLayer.Controllers
                 return BadRequest(result.Key);
             }
             return CreatedAtAction("CreateActivity", result.Value);
+        }
+
+        /// <summary>
+        /// API lấy tất cả activities
+        /// </summary>
+        [HttpGet]
+        public ActionResult<List<AcitivityViewModel>> GetActivities()
+        {
+            List<AcitivityViewModel> acitivities = _activityService.GetActivities();
+            return Ok(acitivities);
         }
     }
 }

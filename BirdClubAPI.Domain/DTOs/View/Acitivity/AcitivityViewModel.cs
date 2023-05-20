@@ -1,8 +1,8 @@
 ﻿using BirdClubAPI.Domain.DTOs.Response.Member;
 
-namespace BirdClubAPI.Domain.DTOs.Response.Activity
+namespace BirdClubAPI.Domain.DTOs.View.Acitivity
 {
-    public class ActivityResponseModel
+    public class AcitivityViewModel
     {
         public string Name { get; set; } = null!;
         public DateTime CreateTime { get; set; }

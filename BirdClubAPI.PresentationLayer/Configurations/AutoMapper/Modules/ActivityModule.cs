@@ -13,6 +13,7 @@ namespace BirdClubAPI.PresentationLayer.Configurations.AutoMapper.Modules
             mc.CreateMap<Activity, ActivityResponseModel>().ReverseMap();
             mc.CreateMap<Activity, CreateActivityRequestModel>().ReverseMap();
             mc.CreateMap<ActivityResponseModel, AcitivityCreateViewModel>().ReverseMap();
+            mc.CreateMap<ActivityResponseModel, AcitivityViewModel>().ReverseMap();
         }
     }
 }
