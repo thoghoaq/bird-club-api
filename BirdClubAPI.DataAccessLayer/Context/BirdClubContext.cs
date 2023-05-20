@@ -1,5 +1,8 @@
-﻿using BirdClubAPI.Domain.Entities;
+﻿using BirdClubAPI.Domain.Commons.Utils;
+using BirdClubAPI.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace BirdClubAPI.DataAccessLayer.Context
 {
@@ -133,6 +136,11 @@ namespace BirdClubAPI.DataAccessLayer.Context
                 entity.Property(e => e.Phone)
                     .HasMaxLength(13)
                     .IsUnicode(false);
+
+                entity.Property(e => e.Birthday)
+                    .HasConversion<DateOnlyConverter, DateOnlyComparer>();
+
+                entity.Property(e => e.About).HasMaxLength(2000);
 
                 entity.HasOne(d => d.User)
                     .WithOne(p => p.Member)

@@ -17,8 +17,13 @@ namespace BirdClubAPI.PresentationLayer.Configurations.AutoMapper.Modules
 
             mc.CreateMap<Member, UpdateMemberRequestModel>()
                 .ForMember(dest => dest.DisplayName, opts => opts.MapFrom(src => src.User.DisplayName))
+                .ForMember(dest => dest.Birthday, opts => opts.MapFrom(src => src.Birthday.ToString()))
                 .ReverseMap();
-            mc.CreateMap<Member, MemberProfileResponseModel>().ReverseMap();
+
+            mc.CreateMap<Member, MemberProfileResponseModel>()
+                .ForMember(dest => dest.Birthday, opts => opts.MapFrom(src => src.Birthday.ToString()))
+                .ReverseMap();
+
             mc.CreateMap<MemberProfileResponseModel, MemberViewModel>()
                 .ForMember(dest => dest.Id, opts => opts.MapFrom(src => src.UserId))
                 .ForMember(dest => dest.DisplayName, opts => opts.MapFrom(src => src.User.DisplayName))
