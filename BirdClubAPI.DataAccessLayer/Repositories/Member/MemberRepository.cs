@@ -31,7 +31,9 @@ namespace BirdClubAPI.DataAccessLayer.Repositories.Member
                 MembershipStatus = e.MembershipStatus,
                 Phone = e.Phone,
                 UserId = e.UserId,
-                User = _mapper.Map<UserResponseModel>(e.User)
+                User = _mapper.Map<UserResponseModel>(e.User),
+                About = e.About,
+                Birthday = e.Birthday != null ? e.Birthday.ToString() : null
             }).ToList();
         }
 

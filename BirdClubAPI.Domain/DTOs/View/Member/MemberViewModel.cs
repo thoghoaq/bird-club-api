@@ -10,6 +10,7 @@
         public string? Avatar { get; set; }
         public string? Address { get; set; }
         public bool MembershipStatus { get; set; }
-        public DateOnly? Birthday { get; set; }
+        public string? Birthday { get; set; }
+        public string? About { get; set; }
     }
 }

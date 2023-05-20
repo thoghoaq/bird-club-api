@@ -1,28 +1,11 @@
-﻿using BirdClubAPI.Domain.Entities;
+﻿using BirdClubAPI.Domain.Commons.Utils;
+using BirdClubAPI.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace BirdClubAPI.DataAccessLayer.Context
 {
-    public class DateOnlyConverter : ValueConverter<DateOnly, DateTime>
-    {
-        public DateOnlyConverter() : base(
-                dateOnly => dateOnly.ToDateTime(TimeOnly.MinValue),
-                dateTime => DateOnly.FromDateTime(dateTime))
-        {
-        }
-    }
-
-    public class DateOnlyComparer : ValueComparer<DateOnly>
-    {
-        public DateOnlyComparer() : base(
-            (d1, d2) => d1.DayNumber == d2.DayNumber,
-            d => d.GetHashCode())
-        {
-        }
-    }
-
     public partial class BirdClubContext : DbContext
     {
         public BirdClubContext()
@@ -156,6 +139,8 @@ namespace BirdClubAPI.DataAccessLayer.Context
 
                 entity.Property(e => e.Birthday)
                     .HasConversion<DateOnlyConverter, DateOnlyComparer>();
+
+                entity.Property(e => e.About).HasMaxLength(2000);
 
                 entity.HasOne(d => d.User)
                     .WithOne(p => p.Member)

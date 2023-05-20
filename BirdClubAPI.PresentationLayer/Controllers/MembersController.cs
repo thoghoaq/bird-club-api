@@ -65,7 +65,7 @@ namespace BirdClubAPI.PresentationLayer.Controllers
             var response = _memberService.GetProfile(id);
             if (response.Key.StatusCode.Equals(HttpStatusCode.NotFound))
             {
-                return NotFound(response);
+                return NotFound(response.Key);
             }
             return Ok(response.Value);
         }
@@ -79,7 +79,7 @@ namespace BirdClubAPI.PresentationLayer.Controllers
             var response = _memberService.GetMembers();
             if (response.Key.StatusCode.Equals(HttpStatusCode.NotFound))
             {
-                return NotFound(response);
+                return NotFound(response.Key);
             }
             return Ok(response.Value);
         }

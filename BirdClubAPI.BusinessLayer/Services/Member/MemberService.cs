@@ -94,7 +94,13 @@ namespace BirdClubAPI.BusinessLayer.Services.Member
                     if (requestValue != null)
                     {
                         var memberProperty = member.GetType().GetProperty(property.Name);
-                        memberProperty?.SetValue(member, requestValue);
+                        if (property.Name.Equals("Birthday"))
+                        {
+                            memberProperty?.SetValue(member, DateOnly.Parse(requestValue.ToString()));
+                        } else
+                        {
+                            memberProperty?.SetValue(member, requestValue);
+                        }
                     }
                 }
 
