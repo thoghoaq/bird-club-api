@@ -107,7 +107,7 @@ namespace BirdClubAPI.DataAccessLayer.Context
 
                 entity.Property(e => e.NewsfeedId).ValueGeneratedNever();
 
-                entity.Property(e => e.Content).HasMaxLength(2000);
+                entity.Property(e => e.Content);
 
                 entity.Property(e => e.Title).HasMaxLength(100);
 
