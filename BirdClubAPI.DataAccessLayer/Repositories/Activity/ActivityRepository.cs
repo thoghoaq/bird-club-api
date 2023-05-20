@@ -34,6 +34,7 @@ namespace BirdClubAPI.DataAccessLayer.Repositories.Activity
         public List<ActivityResponseModel> GetActivities()
         {
             var activities = _context.Activities
+                .Where(e => e.Status == true)
                 .Include(e => e.Owner)
                     .ThenInclude(e => e.User)
                 .ToList();
@@ -42,6 +43,34 @@ namespace BirdClubAPI.DataAccessLayer.Repositories.Activity
                 return new List<ActivityResponseModel>();
             }
             return _mapper.Map<List<ActivityResponseModel>>(activities);
+        }
+
+        public Domain.Entities.Activity? GetActivities(int id)
+        {
+            var activity = _context.Activities
+                .Include(e => e.Owner)
+                    .ThenInclude(e => e.User)
+                .SingleOrDefault(e => e.Id == id);
+            if (activity == null || activity.Status == false)
+            {
+                return null;
+            }
+            return activity;
+        }
+
+        public bool UpdateActivity(Domain.Entities.Activity activity)
+        {
+            try
+            {
+                _context.Activities.Attach(activity);
+                _context.Entry(activity).State = EntityState.Modified;
+                _context.SaveChanges();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
     }
 }

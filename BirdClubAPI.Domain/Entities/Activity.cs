@@ -19,6 +19,7 @@ namespace BirdClubAPI.Domain.Entities
         public string ActivityType { get; set; } = null!;
         public int OwnerId { get; set; }
         public int Id { get; set; }
+        public bool Status { get; set; }
 
         public virtual Member Owner { get; set; } = null!;
         public virtual ICollection<Attendance> Attendances { get; set; }

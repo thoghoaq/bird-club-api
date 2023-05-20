@@ -8,5 +8,8 @@ namespace BirdClubAPI.BusinessLayer.Services.Activity
     {
         KeyValuePair<MessageViewModel, AcitivityCreateViewModel?> CreateActivity(CreateActivityRequestModel requestModel);
         List<AcitivityViewModel> GetActivities();
+        KeyValuePair<MessageViewModel, AcitivityViewModel?> GetActivities(int id);
+        MessageViewModel UpdateActivity(int id, UpdateActivityRequestModel requestModel);
+        MessageViewModel UpdateActivityStatus(int id, UpdateActivityStatusRequestModel requestModel);
     }
 }
