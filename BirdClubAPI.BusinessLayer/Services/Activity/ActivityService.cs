@@ -52,6 +52,31 @@ namespace BirdClubAPI.BusinessLayer.Services.Activity
             return _mapper.Map<List<AcitivityViewModel>>(activities);
         }
 
+        public List<ActivityCalenderViewModel> GetCalenderActivities()
+        {
+            List<ActivityCalenderViewModel> calenderActivities = new();
+            List<ActivityResponseModel> activities = _activityRepository.GetActivities();
+            foreach (var activity in activities)
+            {
+                List<DateTime> dateList = DateTimeManager.GetDatesInRange(activity.StartTime, activity.EndTime);
+                foreach(var date in dateList)
+                {
+                    calenderActivities.Add(new ActivityCalenderViewModel
+                    {
+                        Id = activity.Id,
+                        Name = activity.Name,
+                        ActivityType = activity.ActivityType,
+                        CreateTime = activity.CreateTime,
+                        Location = activity.Location,
+                        Date = date,
+                        StartTime = activity.StartTime.TimeOfDay.ToString(@"hh\:mm\:ss"),
+                        EndTime = activity.EndTime.TimeOfDay.ToString(@"hh\:mm\:ss"),
+                    });
+                }
+            }
+            return calenderActivities.OrderBy(e => e.Date).ToList();
+        }
+
         public MessageViewModel UpdateActivity(int id, UpdateActivityRequestModel requestModel)
         {
             var activity = _activityRepository.GetActivities(id);
