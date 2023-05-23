@@ -9,6 +9,9 @@ namespace BirdClubAPI.Domain.Entities
         {
             Activities = new HashSet<Activity>();
             Attendances = new HashSet<Attendance>();
+            Comments = new HashSet<Comment>();
+            Feedbacks = new HashSet<Feedback>();
+            Likes = new HashSet<Like>();
             Newsfeeds = new HashSet<Newsfeed>();
         }
 
@@ -23,6 +26,9 @@ namespace BirdClubAPI.Domain.Entities
         public virtual User User { get; set; } = null!;
         public virtual ICollection<Activity> Activities { get; set; }
         public virtual ICollection<Attendance> Attendances { get; set; }
+        public virtual ICollection<Comment> Comments { get; set; }
+        public virtual ICollection<Feedback> Feedbacks { get; set; }
+        public virtual ICollection<Like> Likes { get; set; }
         public virtual ICollection<Newsfeed> Newsfeeds { get; set; }
     }
 }

@@ -1,8 +1,6 @@
 ﻿using BirdClubAPI.Domain.Commons.Utils;
 using BirdClubAPI.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace BirdClubAPI.DataAccessLayer.Context
 {
@@ -21,6 +19,9 @@ namespace BirdClubAPI.DataAccessLayer.Context
         public virtual DbSet<Attendance> Attendances { get; set; } = null!;
         public virtual DbSet<Bird> Birds { get; set; } = null!;
         public virtual DbSet<Blog> Blogs { get; set; } = null!;
+        public virtual DbSet<Comment> Comments { get; set; } = null!;
+        public virtual DbSet<Feedback> Feedbacks { get; set; } = null!;
+        public virtual DbSet<Like> Likes { get; set; } = null!;
         public virtual DbSet<Member> Members { get; set; } = null!;
         public virtual DbSet<Newsfeed> Newsfeeds { get; set; } = null!;
         public virtual DbSet<Record> Records { get; set; } = null!;
@@ -42,6 +43,8 @@ namespace BirdClubAPI.DataAccessLayer.Context
                     .HasMaxLength(50)
                     .IsUnicode(false);
 
+                entity.Property(e => e.Background).IsUnicode(false);
+
                 entity.Property(e => e.CreateTime).HasColumnType("datetime");
 
                 entity.Property(e => e.Description).HasMaxLength(2000);
@@ -53,6 +56,10 @@ namespace BirdClubAPI.DataAccessLayer.Context
                 entity.Property(e => e.Name).HasMaxLength(100);
 
                 entity.Property(e => e.StartTime).HasColumnType("datetime");
+
+                entity.Property(e => e.Status)
+                    .IsRequired()
+                    .HasDefaultValueSql("((1))");
 
                 entity.HasOne(d => d.Owner)
                     .WithMany(p => p.Activities)
@@ -118,6 +125,97 @@ namespace BirdClubAPI.DataAccessLayer.Context
                     .HasConstraintName("Blog_Newsfeed_Id_fk");
             });
 
+            modelBuilder.Entity<Comment>(entity =>
+            {
+                entity.ToTable("Comment");
+
+                entity.Property(e => e.Content).HasMaxLength(1000);
+
+                entity.Property(e => e.PublicationTime).HasColumnType("datetime");
+
+                entity.Property(e => e.Type)
+                    .HasMaxLength(10)
+                    .IsUnicode(false);
+
+                entity.HasOne(d => d.Owner)
+                    .WithMany(p => p.Comments)
+                    .HasForeignKey(d => d.OwnerId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("Comment_Member_UserId_fk");
+
+                entity.HasOne(d => d.Reference)
+                    .WithMany(p => p.Comments)
+                    .HasForeignKey(d => d.ReferenceId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("Comment_Activity_Id_fk");
+
+                entity.HasOne(d => d.ReferenceNavigation)
+                    .WithMany(p => p.Comments)
+                    .HasForeignKey(d => d.ReferenceId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("Comment_Blog_NewsfeedId_fk");
+
+                entity.HasOne(d => d.Reference1)
+                    .WithMany(p => p.Comments)
+                    .HasForeignKey(d => d.ReferenceId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("Comment_Record_NewsfeedId_fk");
+            });
+
+            modelBuilder.Entity<Feedback>(entity =>
+            {
+                entity.ToTable("Feedback");
+
+                entity.Property(e => e.Content).HasMaxLength(1000);
+
+                entity.Property(e => e.Time).HasColumnType("datetime");
+
+                entity.HasOne(d => d.Activity)
+                    .WithMany(p => p.Feedbacks)
+                    .HasForeignKey(d => d.ActivityId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("Feedback_Activity_Id_fk");
+
+                entity.HasOne(d => d.Owner)
+                    .WithMany(p => p.Feedbacks)
+                    .HasForeignKey(d => d.OwnerId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("Feedback_Member_UserId_fk");
+            });
+
+            modelBuilder.Entity<Like>(entity =>
+            {
+                entity.ToTable("Like");
+
+                entity.Property(e => e.Type)
+                    .HasMaxLength(10)
+                    .IsUnicode(false);
+
+                entity.HasOne(d => d.Owner)
+                    .WithMany(p => p.Likes)
+                    .HasForeignKey(d => d.OwnerId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("Like_Member_UserId_fk");
+
+                entity.HasOne(d => d.Reference)
+                    .WithMany(p => p.Likes)
+                    .HasForeignKey(d => d.ReferenceId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("Like_Activity_Id_fk");
+
+                entity.HasOne(d => d.ReferenceNavigation)
+                    .WithMany(p => p.Likes)
+                    .HasForeignKey(d => d.ReferenceId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("Like_Blog_NewsfeedId_fk");
+
+                entity.HasOne(d => d.Reference1)
+                    .WithMany(p => p.Likes)
+                    .HasForeignKey(d => d.ReferenceId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("Like_Record_NewsfeedId_fk");
+            });
+
             modelBuilder.Entity<Member>(entity =>
             {
                 entity.HasKey(e => e.UserId)
@@ -126,6 +224,8 @@ namespace BirdClubAPI.DataAccessLayer.Context
                 entity.ToTable("Member");
 
                 entity.Property(e => e.UserId).ValueGeneratedNever();
+
+                entity.Property(e => e.About).HasMaxLength(2000);
 
                 entity.Property(e => e.Address).HasMaxLength(255);
 
