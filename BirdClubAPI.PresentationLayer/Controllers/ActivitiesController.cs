@@ -101,5 +101,18 @@ namespace BirdClubAPI.PresentationLayer.Controllers
             }
             return Ok(result);
         }
+        /// <summary>
+        /// API lấy attendance của 1 activity
+        /// </summary>
+        [HttpGet("{id}/listattendance")]
+        public ActionResult<List<AttendanceViewModel>> GetAttendance(int id)
+        {
+            var response = _activityService.GetAttendance(id);
+            if (response.Key.StatusCode.Equals(HttpStatusCode.NotFound))
+            {
+                return NotFound(response.Key);
+            }
+            return Ok(response.Value);
+        }
     }
 }

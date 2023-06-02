@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using BirdClubAPI.DataAccessLayer.Context;
 using BirdClubAPI.Domain.DTOs.Response.Activity;
+using BirdClubAPI.Domain.DTOs.Response.Member;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
@@ -56,6 +57,22 @@ namespace BirdClubAPI.DataAccessLayer.Repositories.Activity
                 return null;
             }
             return activity;
+        }
+
+        public Domain.Entities.Activity? GetActivity(int activityId)
+        {
+            var activity = _context.Activities
+               .Include(e => e.Owner)
+                   .ThenInclude(e => e.User)
+               .SingleOrDefault(e => e.Id == activityId);
+
+            return activity;
+        }
+
+        public List<MemberResponseModel> GetAttendance()
+        {
+            var members = _context.Members.ToList();
+            return _mapper.Map<List<MemberResponseModel>>(members);
         }
 
         public bool UpdateActivity(Domain.Entities.Activity activity)
