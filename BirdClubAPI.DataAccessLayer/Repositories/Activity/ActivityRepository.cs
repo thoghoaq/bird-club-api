@@ -4,6 +4,7 @@ using BirdClubAPI.Domain.DTOs.Response.Activity;
 using BirdClubAPI.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using System.Diagnostics;
 
 namespace BirdClubAPI.DataAccessLayer.Repositories.Activity
 {
@@ -46,6 +47,20 @@ namespace BirdClubAPI.DataAccessLayer.Repositories.Activity
             }
         }
 
+        public bool DeleteAttendanceRequest(AttendanceRequest request)
+        {
+            try
+            {
+                _context.AttendanceRequests.Remove(request);
+                _context.SaveChanges();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
         public List<ActivityResponseModel> GetActivities()
         {
             var activities = _context.Activities
@@ -71,6 +86,64 @@ namespace BirdClubAPI.DataAccessLayer.Repositories.Activity
                 return null;
             }
             return activity;
+        }
+
+        public AttendanceRequest? GetAttendanceRequest(int memberId, int activityId)
+        {
+            var request = _context.AttendanceRequests.Find(memberId, activityId);
+            return request;
+        }
+
+        public Attendance? PostAttendance(int memberId, int activityId)
+        {
+            try
+            {
+                var result = _context.Attendances.Add(new Attendance
+                {
+                    MemberId = memberId,
+                    ActivityId = activityId,
+                    AttendanceTime = DateTime.UtcNow.AddHours(7)
+                });
+                _context.SaveChanges();
+                return result.Entity;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        public AttendanceRequest? PostAttendanceRequest(int memberId, int activityId)
+        {
+            try
+            {
+                var result = _context.AttendanceRequests.Add(new AttendanceRequest
+                {
+                    MemberId = memberId,
+                    ActivityId = activityId,
+                    RequestTime = DateTime.UtcNow.AddHours(7)
+                });
+                _context.SaveChanges();
+                return result.Entity;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        public bool RemoveAttendanceRequest(AttendanceRequest request)
+        {
+            try
+            {
+                var result = _context.AttendanceRequests.Remove(request);
+                _context.SaveChanges();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         public bool UpdateActivity(Domain.Entities.Activity activity)
