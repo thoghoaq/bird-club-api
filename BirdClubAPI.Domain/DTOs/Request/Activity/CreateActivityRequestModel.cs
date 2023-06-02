@@ -9,5 +9,6 @@
         public string? Description { get; set; }
         public string ActivityType { get; set; } = null!;
         public int OwnerId { get; set; }
+        public string Background { get; set; } = null!;
     }
 }
