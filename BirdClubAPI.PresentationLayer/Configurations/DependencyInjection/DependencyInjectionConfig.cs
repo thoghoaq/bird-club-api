@@ -1,11 +1,9 @@
 ﻿using BirdClubAPI.BusinessLayer.Services.Activity;
 using BirdClubAPI.BusinessLayer.Services.Auth;
-using BirdClubAPI.BusinessLayer.Services.Bird;
 using BirdClubAPI.BusinessLayer.Services.Member;
 using BirdClubAPI.BusinessLayer.Services.Newsfeed;
 using BirdClubAPI.DataAccessLayer.Context;
 using BirdClubAPI.DataAccessLayer.Repositories.Activity;
-using BirdClubAPI.DataAccessLayer.Repositories.Bird;
 using BirdClubAPI.DataAccessLayer.Repositories.Member;
 using BirdClubAPI.DataAccessLayer.Repositories.Newsfeed;
 using BirdClubAPI.DataAccessLayer.Repositories.User;
@@ -33,9 +31,6 @@ namespace BirdClubAPI.Core.DependencyInjection
 
             services.AddScoped<IActivityService, ActivityService>();
             services.AddTransient<IActivityRepository, ActivityRepository>();
-
-            services.AddScoped<IBirdService, BirdService>();
-            services.AddTransient<IBirdRepository, BirdRepository>();
 
             return services;
         }
