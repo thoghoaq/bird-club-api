@@ -46,6 +46,27 @@ namespace BirdClubAPI.BusinessLayer.Services.Activity
                 );
         }
 
+        public MessageViewModel DeclineAttendance(int memberId, int activityId)
+        {
+            var alreadyRequest = _activityRepository.GetAttendanceRequest(memberId, activityId);
+            if (alreadyRequest == null) return new MessageViewModel
+            {
+                StatusCode = System.Net.HttpStatusCode.BadRequest,
+                Message = "Not found this request"
+            };
+            bool result = _activityRepository.DeleteAttendanceRequest(alreadyRequest);
+            if (result == false) return new MessageViewModel
+            {
+                StatusCode = System.Net.HttpStatusCode.BadRequest,
+                Message = "Error when decline request"
+            };
+            return new MessageViewModel
+            {
+                StatusCode = System.Net.HttpStatusCode.OK,
+                Message = "Declined request"
+            };
+        }
+
         public List<AcitivityViewModel> GetActivities()
         {
             List<ActivityResponseModel> activities = _activityRepository.GetActivities();
@@ -75,6 +96,60 @@ namespace BirdClubAPI.BusinessLayer.Services.Activity
                 }
             }
             return calenderActivities.OrderBy(e => e.Date).ToList();
+        }
+
+        public MessageViewModel PostAttendance(int memberId, int activityId)
+        {
+            var alreadyRequest = _activityRepository.GetAttendanceRequest(memberId, activityId);
+            if (alreadyRequest == null) return new MessageViewModel
+            {
+                StatusCode = System.Net.HttpStatusCode.BadRequest,
+                Message = "Not found this request"
+            };
+            bool isRemoved = _activityRepository.RemoveAttendanceRequest(alreadyRequest);
+            if (isRemoved == false) return new MessageViewModel
+            {
+                StatusCode = System.Net.HttpStatusCode.BadRequest,
+                Message = "Error when remove request"
+            };
+            var attendance = _activityRepository.PostAttendance(memberId, activityId);
+            if (attendance == null) return new MessageViewModel
+            {
+                StatusCode = System.Net.HttpStatusCode.BadRequest,
+                Message = "Error when create attendance"
+            };
+            return new MessageViewModel
+            {
+                StatusCode = System.Net.HttpStatusCode.OK,
+                Message = "Create attendance success"
+            };
+        }
+
+        public MessageViewModel RequestAttendance(int memberId, int activityId)
+        {
+            var alreadyRequest = _activityRepository.GetAttendanceRequest(memberId, activityId);
+            if (alreadyRequest != null)
+            {
+                return new MessageViewModel
+                {
+                    StatusCode = System.Net.HttpStatusCode.BadRequest,
+                    Message = "Request has already existed"
+                };
+            }
+            var request = _activityRepository.PostAttendanceRequest(memberId, activityId);
+            if (request == null)
+            {
+                return new MessageViewModel
+                {
+                    StatusCode = System.Net.HttpStatusCode.BadRequest,
+                    Message = "Create request fail"
+                };
+            }
+            return new MessageViewModel
+            {
+                StatusCode = System.Net.HttpStatusCode.OK,
+                Message = "Request created"
+            };
         }
 
         public MessageViewModel UpdateActivity(int id, UpdateActivityRequestModel requestModel)

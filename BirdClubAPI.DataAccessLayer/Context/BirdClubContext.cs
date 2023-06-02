@@ -17,6 +17,7 @@ namespace BirdClubAPI.DataAccessLayer.Context
 
         public virtual DbSet<Activity> Activities { get; set; } = null!;
         public virtual DbSet<Attendance> Attendances { get; set; } = null!;
+        public virtual DbSet<AttendanceRequest> AttendanceRequests { get; set; } = null!;
         public virtual DbSet<Bird> Birds { get; set; } = null!;
         public virtual DbSet<Blog> Blogs { get; set; } = null!;
         public virtual DbSet<Comment> Comments { get; set; } = null!;
@@ -88,6 +89,28 @@ namespace BirdClubAPI.DataAccessLayer.Context
                     .HasForeignKey(d => d.MemberId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("Attendance_Member_UserId_fk");
+            });
+
+            modelBuilder.Entity<AttendanceRequest>(entity =>
+            {
+                entity.HasKey(e => new { e.MemberId, e.ActivityId })
+                    .HasName("AttendanceRequest_pk");
+
+                entity.ToTable("AttendanceRequest");
+
+                entity.Property(e => e.RequestTime).HasColumnType("datetime");
+
+                entity.HasOne(d => d.Activity)
+                    .WithMany(p => p.AttendanceRequests)
+                    .HasForeignKey(d => d.ActivityId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("AttendanceRequest_Activity_Id_fk");
+
+                entity.HasOne(d => d.Member)
+                    .WithMany(p => p.AttendanceRequests)
+                    .HasForeignKey(d => d.MemberId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("AttendanceRequest_Member_UserId_fk");
             });
 
             modelBuilder.Entity<Bird>(entity =>
