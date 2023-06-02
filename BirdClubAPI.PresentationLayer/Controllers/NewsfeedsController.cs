@@ -1,5 +1,6 @@
 ﻿using BirdClubAPI.BusinessLayer.Services.Newsfeed;
 using BirdClubAPI.Domain.DTOs.Request.Newsfeed.Blog;
+using BirdClubAPI.Domain.DTOs.View.Blog;
 using BirdClubAPI.Domain.DTOs.View.Newsfeed;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
@@ -40,6 +41,20 @@ namespace BirdClubAPI.PresentationLayer.Controllers
                 return BadRequest(result.Key);
             }
             return CreatedAtAction("PostBlog", result.Value);
-        }   
+        }
+        /// <summary>
+        /// Get blog
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet("blogs")]
+        public ActionResult<BlogViewModel> GetBlog(int id) {
+            var response = _newsfeedService.GetBlog(id);
+            if (response.Key.StatusCode.Equals(HttpStatusCode.NotFound))
+            {
+                return NotFound(response.Key);
+            }
+            return Ok(response.Value);
+        }
     }
 }

@@ -8,6 +8,7 @@ using BirdClubAPI.DataAccessLayer.Repositories.Member;
 using BirdClubAPI.DataAccessLayer.Repositories.Newsfeed;
 using BirdClubAPI.DataAccessLayer.Repositories.User;
 using Microsoft.EntityFrameworkCore;
+using NTQ.Sdk.Core.BaseConnect;
 
 namespace BirdClubAPI.Core.DependencyInjection
 {
