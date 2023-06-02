@@ -11,7 +11,7 @@ namespace BirdClubAPI.BusinessLayer.Services.Activity
         MessageViewModel DeclineAttendance(int memberId, int activityId);
         List<AcitivityViewModel> GetActivities();
         KeyValuePair<MessageViewModel, AcitivityViewModel?> GetActivities(int id);
-        
+        List<AcitivityViewModel> GetActivitiesByOwner(int ownerId);
         List<ActivityCalenderViewModel> GetCalenderActivities();
         MessageViewModel PostAttendance(int memberId, int activityId);
         MessageViewModel RequestAttendance(int memberId, int activityId);
