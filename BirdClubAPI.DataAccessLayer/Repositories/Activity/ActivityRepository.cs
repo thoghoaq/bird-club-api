@@ -88,6 +88,20 @@ namespace BirdClubAPI.DataAccessLayer.Repositories.Activity
             return activity;
         }
 
+        public List<ActivityResponseModel> GetActivitiesByOwner(int ownerId)
+        {
+            var activities = _context.Activities
+                .Include(e => e.Owner)
+                    .ThenInclude(e => e.User)
+                .Where(e => e.OwnerId == ownerId)
+                .ToList();
+            if (activities.IsNullOrEmpty())
+            {
+                return new List<ActivityResponseModel>();
+            }
+            return _mapper.Map<List<ActivityResponseModel>>(activities);
+        }
+
         public AttendanceRequest? GetAttendanceRequest(int memberId, int activityId)
         {
             var request = _context.AttendanceRequests.Find(memberId, activityId);

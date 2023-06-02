@@ -45,6 +45,16 @@ namespace BirdClubAPI.PresentationLayer.Controllers
         }
 
         /// <summary>
+        /// API lấy tất cả activities thuộc sở hữu của mình
+        /// </summary>
+        [HttpGet("by-owner")]
+        public ActionResult<List<AcitivityViewModel>> GetActivitiesByOwner(int ownerId)
+        {
+            List<AcitivityViewModel> acitivities = _activityService.GetActivitiesByOwner(ownerId);
+            return Ok(acitivities);
+        }
+
+        /// <summary>
         /// API lấy tất cả activities cho calender
         /// </summary>
         [HttpGet("calender")]
