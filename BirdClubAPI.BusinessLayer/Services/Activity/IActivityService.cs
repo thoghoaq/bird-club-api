@@ -6,10 +6,12 @@ namespace BirdClubAPI.BusinessLayer.Services.Activity
 {
     public interface IActivityService
     {
+        KeyValuePair<MessageViewModel, AttendanceActivityViewModel?> AttendanceActivity(AttendanceActivityRequestModel requestModel);
         KeyValuePair<MessageViewModel, AcitivityCreateViewModel?> CreateActivity(CreateActivityRequestModel requestModel);
         MessageViewModel DeclineAttendance(int memberId, int activityId);
         List<AcitivityViewModel> GetActivities();
         KeyValuePair<MessageViewModel, AcitivityViewModel?> GetActivities(int id);
+        
         List<ActivityCalenderViewModel> GetCalenderActivities();
         MessageViewModel PostAttendance(int memberId, int activityId);
         MessageViewModel RequestAttendance(int memberId, int activityId);

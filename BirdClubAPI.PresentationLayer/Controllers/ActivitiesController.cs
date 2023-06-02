@@ -104,6 +104,20 @@ namespace BirdClubAPI.PresentationLayer.Controllers
         }
 
         /// <summary>
+        /// API request attendance 1 activity 
+        /// </summary>
+        [HttpPost("attendance")]
+        public IActionResult AttendanceActivity(AttendanceActivityRequestModel requestModel)
+        {
+            var result = _activityService.AttendanceActivity(requestModel);
+            if (result.Key.StatusCode.Equals(HttpStatusCode.InternalServerError))
+            {
+                return BadRequest(result.Key);
+            }
+            return CreatedAtAction("AttendanceActivity", result.Value);
+        }
+
+        /// <summary>
         /// API gửi request attend 1 activity
         /// </summary>
         [HttpPost("attendance-requests")]

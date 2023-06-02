@@ -19,6 +19,20 @@ namespace BirdClubAPI.DataAccessLayer.Repositories.Activity
             _mapper = mapper;
         }
 
+        public ActivityResponseModel? AttendanceActivity(Domain.Entities.Attendance attendance)
+        {
+           try
+            {
+                var result = _context.Add(attendance);
+                _context.SaveChanges();
+                return _mapper.Map<ActivityResponseModel>(result.Entity);
+            } 
+            catch
+            {
+                return null;
+            }
+        }
+
         public ActivityResponseModel? CreateActivity(Domain.Entities.Activity activity)
         {
             try

@@ -6,6 +6,7 @@ using BirdClubAPI.Domain.DTOs.View.Common;
 using BirdClubAPI.Domain.DTOs.View.Blog;
 using BirdClubAPI.Domain.DTOs.Request.Newsfeed.Blog;
 using BirdClubAPI.Domain.Entities;
+using BirdClubAPI.Domain.DTOs.Response.Blog;
 
 namespace BirdClubAPI.BusinessLayer.Services.Newsfeed
 {
@@ -51,6 +52,33 @@ namespace BirdClubAPI.BusinessLayer.Services.Newsfeed
                 },
                 _mapper.Map<BlogViewModel>(_newsfeedRepository.GetBlogs(result.Id))
                 );
+        }
+
+        public KeyValuePair<MessageViewModel, BlogViewModel?> GetBlog(int id)
+        {
+            var blog = _newsfeedRepository.GetBlogs(id);
+            if(blog == null)
+            {
+                return new KeyValuePair<MessageViewModel, BlogViewModel?>
+                    (
+                        new MessageViewModel
+                        {
+                            StatusCode = System.Net.HttpStatusCode.NotFound,
+                            Message = "Not found this blog"
+                        },
+                        null
+                    );
+            }
+            var response = _mapper.Map<BlogViewModel>(blog);
+            return new KeyValuePair<MessageViewModel, BlogViewModel?>(
+                new MessageViewModel
+                {
+                    StatusCode = System.Net.HttpStatusCode.OK,
+                    Message = string.Empty
+                },
+                response
+                );
+
         }
 
         public NewsfeedViewModel GetNewsfeeds(int limit, int page, int size)

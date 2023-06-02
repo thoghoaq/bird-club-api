@@ -5,6 +5,7 @@ namespace BirdClubAPI.DataAccessLayer.Repositories.Activity
 {
     public interface IActivityRepository
     {
+        ActivityResponseModel? AttendanceActivity(Domain.Entities.Attendance requestModel);
         ActivityResponseModel? CreateActivity(Domain.Entities.Activity requestModel);
         bool DeleteAttendanceRequest(AttendanceRequest request);
         List<ActivityResponseModel> GetActivities();
