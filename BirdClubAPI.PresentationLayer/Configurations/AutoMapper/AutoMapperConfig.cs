@@ -15,6 +15,8 @@ namespace BirdClubAPI.BusinessLayer.Configurations.AutoMapper
                 mc.ConfigRecordModule();
                 mc.ConfigUserModule();
                 mc.ConfigActivityModule();
+                mc.ConfigAttendanceModule();
+                mc.ConfigBirdModule();
             });
             IMapper mapper = mapperConfiguration.CreateMapper();
             services.AddSingleton(mapper);

@@ -19,6 +19,32 @@ namespace BirdClubAPI.BusinessLayer.Services.Activity
             _mapper = mapper;
         }
 
+        public KeyValuePair<MessageViewModel, AttendanceActivityViewModel?> AttendanceActivity(AttendanceActivityRequestModel requestModel)
+        {
+            var attendance = _mapper.Map<Domain.Entities.Attendance>(requestModel);
+            attendance.AttendanceTime = DateTime.UtcNow;
+
+            var result = _activityRepository.AttendanceActivity(attendance);
+            if(result == null)
+            {
+                return new KeyValuePair<MessageViewModel, AttendanceActivityViewModel?>(
+                    new MessageViewModel
+                    {
+                        StatusCode  = System.Net.HttpStatusCode.InternalServerError,
+                        Message = "Error when attendance this activity"
+                    }, null 
+                    );
+            }
+            return new KeyValuePair<MessageViewModel, AttendanceActivityViewModel?>(
+                new MessageViewModel
+                {
+                    StatusCode = System.Net.HttpStatusCode.Created,
+                    Message = "Welcome to Activity"
+                },
+                _mapper.Map<AttendanceActivityViewModel>(result)
+                );
+        }
+
         public KeyValuePair<MessageViewModel, AcitivityCreateViewModel?> CreateActivity(CreateActivityRequestModel requestModel)
         {
             var activity = _mapper.Map<Domain.Entities.Activity>(requestModel);
@@ -131,6 +157,8 @@ namespace BirdClubAPI.BusinessLayer.Services.Activity
                 Message = "Update activity status successful"
             };
         }
+
+        
 
         KeyValuePair<MessageViewModel, AcitivityViewModel?> IActivityService.GetActivities(int id)
         {

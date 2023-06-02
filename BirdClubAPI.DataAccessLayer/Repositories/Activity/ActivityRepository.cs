@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using BirdClubAPI.DataAccessLayer.Context;
 using BirdClubAPI.Domain.DTOs.Response.Activity;
+using BirdClubAPI.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
@@ -15,6 +16,20 @@ namespace BirdClubAPI.DataAccessLayer.Repositories.Activity
         {
             _context = context;
             _mapper = mapper;
+        }
+
+        public ActivityResponseModel? AttendanceActivity(Domain.Entities.Attendance attendance)
+        {
+           try
+            {
+                var result = _context.Add(attendance);
+                _context.SaveChanges();
+                return _mapper.Map<ActivityResponseModel>(result.Entity);
+            } 
+            catch
+            {
+                return null;
+            }
         }
 
         public ActivityResponseModel? CreateActivity(Domain.Entities.Activity activity)
