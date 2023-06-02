@@ -100,6 +100,12 @@ namespace BirdClubAPI.BusinessLayer.Services.Activity
             return _mapper.Map<List<AcitivityViewModel>>(activities);
         }
 
+        public List<AcitivityViewModel> GetActivitiesByOwner(int ownerId)
+        {
+            List<ActivityResponseModel> activities = _activityRepository.GetActivitiesByOwner(ownerId);
+            return _mapper.Map<List<AcitivityViewModel>>(activities);
+        }
+
         public List<ActivityCalenderViewModel> GetCalenderActivities()
         {
             List<ActivityCalenderViewModel> calenderActivities = new();
