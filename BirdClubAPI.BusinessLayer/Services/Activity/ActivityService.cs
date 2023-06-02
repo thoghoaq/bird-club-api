@@ -49,6 +49,7 @@ namespace BirdClubAPI.BusinessLayer.Services.Activity
         {
             var activity = _mapper.Map<Domain.Entities.Activity>(requestModel);
             activity.CreateTime = DateTime.UtcNow.AddHours(7);
+            activity.Status = true;
 
             var result = _activityRepository.CreateActivity(activity);
             if (result == null)
