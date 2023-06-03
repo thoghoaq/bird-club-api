@@ -1,4 +1,5 @@
-﻿using BirdClubAPI.Domain.DTOs.Response.Activity;
+using BirdClubAPI.Domain.DTOs.Response.Activity;
+using BirdClubAPI.Domain.DTOs.Response.Member;
 using BirdClubAPI.Domain.Entities;
 
 namespace BirdClubAPI.DataAccessLayer.Repositories.Activity
@@ -10,6 +11,8 @@ namespace BirdClubAPI.DataAccessLayer.Repositories.Activity
         bool DeleteAttendanceRequest(AttendanceRequest request);
         List<ActivityResponseModel> GetActivities();
         Domain.Entities.Activity? GetActivities(int id);
+        Domain.Entities.Activity? GetActivity(int activityId);
+        List<MemberResponseModel> GetAttendance();
         List<ActivityResponseModel> GetActivitiesByOwner(int ownerId);
         AttendanceRequest? GetAttendanceRequest(int memberId, int activityId);
         Attendance? PostAttendance(int memberId, int activityId);
