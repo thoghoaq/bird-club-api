@@ -1,5 +1,6 @@
 ﻿using BirdClubAPI.BusinessLayer.Services.Activity;
 using BirdClubAPI.Domain.DTOs.Request.Activity;
+using BirdClubAPI.Domain.DTOs.Request.Attendance;
 using BirdClubAPI.Domain.DTOs.View.Acitivity;
 using BirdClubAPI.Domain.DTOs.View.Common;
 using Microsoft.AspNetCore.Mvc;
@@ -40,6 +41,16 @@ namespace BirdClubAPI.PresentationLayer.Controllers
         public ActionResult<List<AcitivityViewModel>> GetActivities()
         {
             List<AcitivityViewModel> acitivities = _activityService.GetActivities();
+            return Ok(acitivities);
+        }
+
+        /// <summary>
+        /// API lấy tất cả activities thuộc sở hữu của mình
+        /// </summary>
+        [HttpGet("by-owner")]
+        public ActionResult<List<AcitivityViewModel>> GetActivitiesByOwner(int ownerId)
+        {
+            List<AcitivityViewModel> acitivities = _activityService.GetActivitiesByOwner(ownerId);
             return Ok(acitivities);
         }
 
@@ -101,6 +112,7 @@ namespace BirdClubAPI.PresentationLayer.Controllers
             }
             return Ok(result);
         }
+
         /// <summary>
         /// API lấy attendance của 1 activity
         /// </summary>
@@ -113,6 +125,62 @@ namespace BirdClubAPI.PresentationLayer.Controllers
                 return NotFound(response.Key);
             }
             return Ok(response.Value);
+        }
+
+        /// <summary>
+        /// API request attendance 1 activity 
+        /// </summary>
+        [HttpPost("attendance")]
+        public IActionResult AttendanceActivity(AttendanceActivityRequestModel requestModel)
+        {
+            var result = _activityService.AttendanceActivity(requestModel);
+            if (result.Key.StatusCode.Equals(HttpStatusCode.InternalServerError))
+            {
+                return BadRequest(result.Key);
+            }
+            return CreatedAtAction("AttendanceActivity", result.Value);
+        }
+
+        /// <summary>
+        /// API gửi request attend 1 activity
+        /// </summary>
+        [HttpPost("attendance-requests")]
+        public IActionResult RequestAttendance(AttendanceRequestModel request)
+        {
+            var result = _activityService.RequestAttendance(request.MemberId, request.ActivityId);
+            if (result.StatusCode.Equals(HttpStatusCode.BadRequest))
+            {
+                return BadRequest(result);
+            }
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// API accept request
+        /// </summary>
+        [HttpPost("attendances")]
+        public IActionResult PostAttendance(AttendanceRequestModel request)
+        {
+            var result = _activityService.PostAttendance(request.MemberId, request.ActivityId);
+            if (result.StatusCode.Equals(HttpStatusCode.OK))
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+        }
+
+        /// <summary>
+        /// API decline an attendance request
+        /// </summary>
+        [HttpDelete("attendance-requests")]
+        public IActionResult DeclineAttendance(AttendanceRequestModel request)
+        {
+            var result = _activityService.DeclineAttendance(request.MemberId, request.ActivityId);
+            if (result.StatusCode.Equals(HttpStatusCode.OK))
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
         }
     }
 }

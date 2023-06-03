@@ -13,5 +13,7 @@ namespace BirdClubAPI.Domain.DTOs.Response.Activity
         public string ActivityType { get; set; } = null!;
         public MemberResponseModel Owner { get; set; } = null!;
         public int Id { get; set; }
+        public bool Status { get; set; }
+        public string? Background { get; set; }
     }
 }

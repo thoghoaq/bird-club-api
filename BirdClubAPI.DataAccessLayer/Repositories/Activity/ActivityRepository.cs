@@ -2,8 +2,10 @@
 using BirdClubAPI.DataAccessLayer.Context;
 using BirdClubAPI.Domain.DTOs.Response.Activity;
 using BirdClubAPI.Domain.DTOs.Response.Member;
+using BirdClubAPI.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using System.Diagnostics;
 
 namespace BirdClubAPI.DataAccessLayer.Repositories.Activity
 {
@@ -18,6 +20,20 @@ namespace BirdClubAPI.DataAccessLayer.Repositories.Activity
             _mapper = mapper;
         }
 
+        public ActivityResponseModel? AttendanceActivity(Domain.Entities.Attendance attendance)
+        {
+           try
+            {
+                var result = _context.Add(attendance);
+                _context.SaveChanges();
+                return _mapper.Map<ActivityResponseModel>(result.Entity);
+            } 
+            catch
+            {
+                return null;
+            }
+        }
+
         public ActivityResponseModel? CreateActivity(Domain.Entities.Activity activity)
         {
             try
@@ -29,6 +45,20 @@ namespace BirdClubAPI.DataAccessLayer.Repositories.Activity
             catch
             {
                 return null;
+            }
+        }
+
+        public bool DeleteAttendanceRequest(AttendanceRequest request)
+        {
+            try
+            {
+                _context.AttendanceRequests.Remove(request);
+                _context.SaveChanges();
+                return true;
+            }
+            catch
+            {
+                return false;
             }
         }
 
@@ -73,6 +103,78 @@ namespace BirdClubAPI.DataAccessLayer.Repositories.Activity
         {
             var members = _context.Members.ToList();
             return _mapper.Map<List<MemberResponseModel>>(members);
+        }
+        
+        public List<ActivityResponseModel> GetActivitiesByOwner(int ownerId)
+        {
+            var activities = _context.Activities
+                .Include(e => e.Owner)
+                    .ThenInclude(e => e.User)
+                .Where(e => e.OwnerId == ownerId)
+                .ToList();
+            if (activities.IsNullOrEmpty())
+            {
+                return new List<ActivityResponseModel>();
+            }
+            return _mapper.Map<List<ActivityResponseModel>>(activities);
+        }
+
+        public AttendanceRequest? GetAttendanceRequest(int memberId, int activityId)
+        {
+            var request = _context.AttendanceRequests.Find(memberId, activityId);
+            return request;
+        }
+
+        public Attendance? PostAttendance(int memberId, int activityId)
+        {
+            try
+            {
+                var result = _context.Attendances.Add(new Attendance
+                {
+                    MemberId = memberId,
+                    ActivityId = activityId,
+                    AttendanceTime = DateTime.UtcNow.AddHours(7)
+                });
+                _context.SaveChanges();
+                return result.Entity;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        public AttendanceRequest? PostAttendanceRequest(int memberId, int activityId)
+        {
+            try
+            {
+                var result = _context.AttendanceRequests.Add(new AttendanceRequest
+                {
+                    MemberId = memberId,
+                    ActivityId = activityId,
+                    RequestTime = DateTime.UtcNow.AddHours(7)
+                });
+                _context.SaveChanges();
+                return result.Entity;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        public bool RemoveAttendanceRequest(AttendanceRequest request)
+        {
+            try
+            {
+                var result = _context.AttendanceRequests.Remove(request);
+                _context.SaveChanges();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         public bool UpdateActivity(Domain.Entities.Activity activity)
