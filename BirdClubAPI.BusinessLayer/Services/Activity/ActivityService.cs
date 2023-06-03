@@ -100,6 +100,46 @@ namespace BirdClubAPI.BusinessLayer.Services.Activity
             return _mapper.Map<List<AcitivityViewModel>>(activities);
         }
 
+        public KeyValuePair<MessageViewModel, List<AttendanceViewModel?>> GetAttendance(int id)
+        {
+            var activity = _activityRepository.GetActivity(id);
+
+            if (activity == null)
+            {
+                return new KeyValuePair<MessageViewModel, List<AttendanceViewModel?>>(
+                    new MessageViewModel
+                    {
+                        StatusCode = System.Net.HttpStatusCode.NotFound,
+                        Message = "Activity not found"
+                    },
+                    new List<AttendanceViewModel?>()
+                );
+            }
+            else
+            {
+                var response = _activityRepository.GetAttendance();
+                if (response == null)
+                {
+                    return new KeyValuePair<MessageViewModel, List<AttendanceViewModel?>>(
+                        new MessageViewModel
+                        {
+                            StatusCode = System.Net.HttpStatusCode.NotFound,
+                            Message = "No members found"
+                        },
+                        new List<AttendanceViewModel?>()
+                    );
+                }
+                return new KeyValuePair<MessageViewModel, List<AttendanceViewModel?>>(
+                    new MessageViewModel
+                    {
+                        StatusCode = System.Net.HttpStatusCode.OK,
+                        Message = string.Empty
+                    },
+                    _mapper.Map<List<AttendanceViewModel?>>(response)
+                );
+            }
+        }
+        
         public List<AcitivityViewModel> GetActivitiesByOwner(int ownerId)
         {
             List<ActivityResponseModel> activities = _activityRepository.GetActivitiesByOwner(ownerId);
