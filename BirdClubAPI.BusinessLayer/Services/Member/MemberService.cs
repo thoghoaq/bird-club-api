@@ -4,6 +4,7 @@ using BirdClubAPI.Domain.DTOs.Request.Member;
 using BirdClubAPI.Domain.DTOs.Response.Member;
 using BirdClubAPI.Domain.DTOs.View.Common;
 using BirdClubAPI.Domain.DTOs.View.Member;
+using System.Net;
 
 namespace BirdClubAPI.BusinessLayer.Services.Member
 {
@@ -45,6 +46,16 @@ namespace BirdClubAPI.BusinessLayer.Services.Member
 
         public KeyValuePair<MessageViewModel, MemberViewModel?> GetProfile(int id)
         {
+            var result = _memberRepository.GetMember(id);
+            var obj = new MemberProfileResponseModel {
+                About = result.About,
+                Address = result.Address,
+                Avatar = result.Avatar,
+            };
+
+
+
+
             var member = _mapper.Map<MemberProfileResponseModel>(_memberRepository.GetMember(id));
             if (member == null)
             {

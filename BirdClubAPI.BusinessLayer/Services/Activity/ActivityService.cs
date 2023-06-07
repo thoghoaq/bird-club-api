@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
 using BirdClubAPI.DataAccessLayer.Repositories.Activity;
+using BirdClubAPI.Domain.Commons.Constants;
+using BirdClubAPI.Domain.Commons.Enums;
 using BirdClubAPI.Domain.Commons.Utils;
 using BirdClubAPI.Domain.DTOs.Request.Activity;
 using BirdClubAPI.Domain.DTOs.Response.Activity;
@@ -25,14 +27,14 @@ namespace BirdClubAPI.BusinessLayer.Services.Activity
             attendance.AttendanceTime = DateTime.UtcNow;
 
             var result = _activityRepository.AttendanceActivity(attendance);
-            if(result == null)
+            if (result == null)
             {
                 return new KeyValuePair<MessageViewModel, AttendanceActivityViewModel?>(
                     new MessageViewModel
                     {
-                        StatusCode  = System.Net.HttpStatusCode.InternalServerError,
+                        StatusCode = System.Net.HttpStatusCode.InternalServerError,
                         Message = "Error when attendance this activity"
-                    }, null 
+                    }, null
                     );
             }
             return new KeyValuePair<MessageViewModel, AttendanceActivityViewModel?>(
@@ -139,7 +141,7 @@ namespace BirdClubAPI.BusinessLayer.Services.Activity
                 );
             }
         }
-        
+
         public List<AcitivityViewModel> GetActivitiesByOwner(int ownerId)
         {
             List<ActivityResponseModel> activities = _activityRepository.GetActivitiesByOwner(ownerId);
@@ -153,7 +155,7 @@ namespace BirdClubAPI.BusinessLayer.Services.Activity
             foreach (var activity in activities)
             {
                 List<DateTime> dateList = DateTimeManager.GetDatesInRange(activity.StartTime, activity.EndTime);
-                foreach(var date in dateList)
+                foreach (var date in dateList)
                 {
                     calenderActivities.Add(new ActivityCalenderViewModel
                     {
@@ -224,6 +226,47 @@ namespace BirdClubAPI.BusinessLayer.Services.Activity
                 Message = "Request created"
             };
         }
+        public AttendanceStatusRm GetUserAttendanceStatus(int id, int memberId)
+        {
+            var activity = _activityRepository.GetActivitieWithAttendance(id);
+            if (activity == null) return new AttendanceStatusRm
+            {
+                Status = AttendanceStatusEnum.NOT_FOUND,
+                Message = AttendanceStatusConstants.NOT_FOUND,
+            };
+            if (activity.EndTime.CompareTo(DateTime.UtcNow.AddHours(7)) < 0)
+            {
+                return new AttendanceStatusRm
+                {
+                    Status = AttendanceStatusEnum.CLOSED,
+                    Message = AttendanceStatusConstants.CLOSED,
+                };
+            }
+            if (activity.AttendanceRequests.Any(e => e.MemberId == memberId))
+            {
+                return new AttendanceStatusRm
+                {
+                    Status = AttendanceStatusEnum.PENDING,
+                    Message = AttendanceStatusConstants.PENDING,
+                };
+            }
+            else if (activity.Attendances.Any(e => e.MemberId == memberId))
+            {
+                return new AttendanceStatusRm
+                {
+                    Status = AttendanceStatusEnum.ACCEPTED,
+                    Message = AttendanceStatusConstants.ACCEPTED,
+                };
+            }
+            else
+            {
+                return new AttendanceStatusRm
+                {
+                    Status = AttendanceStatusEnum.NOT_ATTEND,
+                    Message = AttendanceStatusConstants.NOT_ATTEND,
+                };
+            }
+        }
 
         public MessageViewModel UpdateActivity(int id, UpdateActivityRequestModel requestModel)
         {
@@ -238,7 +281,8 @@ namespace BirdClubAPI.BusinessLayer.Services.Activity
             }
             activity = ExcludeNullPropertiesMapper.Map<UpdateActivityRequestModel>(requestModel, activity);
             var result = _activityRepository.UpdateActivity(activity);
-            if (result == false) {
+            if (result == false)
+            {
                 return new MessageViewModel
                 {
                     StatusCode = System.Net.HttpStatusCode.Conflict,
@@ -280,7 +324,7 @@ namespace BirdClubAPI.BusinessLayer.Services.Activity
             };
         }
 
-        
+
 
         KeyValuePair<MessageViewModel, AcitivityViewModel?> IActivityService.GetActivities(int id)
         {
@@ -306,6 +350,35 @@ namespace BirdClubAPI.BusinessLayer.Services.Activity
                 },
                 response
                 );
+        }
+
+        public KeyValuePair<MessageViewModel, List<AttendanceRequestRm>> GetAttendanceRequests(int id)
+        {
+            var activity = _activityRepository.GetActivity(id);
+
+            if (activity == null)
+            {
+                return new KeyValuePair<MessageViewModel, List<AttendanceRequestRm>>(
+                    new MessageViewModel
+                    {
+                        StatusCode = System.Net.HttpStatusCode.NotFound,
+                        Message = "Activity not found"
+                    },
+                    new List<AttendanceRequestRm>()
+                );
+            }
+            else
+            {
+                var response = _activityRepository.GetAttendanceRequests(id);
+                return new KeyValuePair<MessageViewModel, List<AttendanceRequestRm>>(
+                    new MessageViewModel
+                    {
+                        StatusCode = System.Net.HttpStatusCode.OK,
+                        Message = string.Empty
+                    },
+                    _mapper.Map<List<AttendanceRequestRm>>(response)
+                    );
+            }
         }
     }
 }
