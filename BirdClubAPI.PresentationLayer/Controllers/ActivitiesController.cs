@@ -1,6 +1,8 @@
 ﻿using BirdClubAPI.BusinessLayer.Services.Activity;
+using BirdClubAPI.Domain.Commons.Enums;
 using BirdClubAPI.Domain.DTOs.Request.Activity;
 using BirdClubAPI.Domain.DTOs.Request.Attendance;
+using BirdClubAPI.Domain.DTOs.Response.Activity;
 using BirdClubAPI.Domain.DTOs.View.Acitivity;
 using BirdClubAPI.Domain.DTOs.View.Common;
 using Microsoft.AspNetCore.Mvc;
@@ -181,6 +183,34 @@ namespace BirdClubAPI.PresentationLayer.Controllers
                 return Ok(result);
             }
             return BadRequest(result);
+        }
+
+        /// <summary>
+        /// API check status of user's attendance on activity, NOT_ATTEND = 0, PENDING = 1, REJECTED = 2,ACCEPTED = 3, CLOSED = 4, NOT_FOUND = 5,
+        /// </summary>
+        [HttpGet("{id}/user-attendance-status")]
+        public IActionResult GetUserAttendanceStatus(int id, int memberId)
+        {
+            AttendanceStatusRm result = _activityService.GetUserAttendanceStatus(id, memberId);
+            if (result.Status.Equals(AttendanceStatusEnum.NOT_FOUND))
+            {
+                return NotFound(result);
+            }
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// API lấy attendance request của 1 activity
+        /// </summary>
+        [HttpGet("{id}/attendance-requests")]
+        public ActionResult<List<AttendanceViewModel>> GetAttendanceRequests(int id)
+        {
+            var response = _activityService.GetAttendanceRequests(id);
+            if (response.Key.StatusCode.Equals(HttpStatusCode.NotFound))
+            {
+                return NotFound(response.Key);
+            }
+            return Ok(response.Value);
         }
     }
 }
