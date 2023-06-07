@@ -177,6 +177,20 @@ namespace BirdClubAPI.DataAccessLayer.Repositories.Activity
             }
         }
 
+        public Domain.Entities.Activity? GetActivitieWithAttendance(int id)
+        {
+            var activity = _context.Activities
+                .Include(e => e.Owner)
+                .Include(e => e.Attendances)
+                .Include(e => e.AttendanceRequests)
+                .SingleOrDefault(e => e.Id == id);
+            if (activity == null || activity.Status == false)
+            {
+                return null;
+            }
+            return activity;
+        }
+
         public bool UpdateActivity(Domain.Entities.Activity activity)
         {
             try

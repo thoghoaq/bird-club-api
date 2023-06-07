@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
 using BirdClubAPI.DataAccessLayer.Repositories.Activity;
+using BirdClubAPI.Domain.Commons.Constants;
+using BirdClubAPI.Domain.Commons.Enums;
 using BirdClubAPI.Domain.Commons.Utils;
 using BirdClubAPI.Domain.DTOs.Request.Activity;
 using BirdClubAPI.Domain.DTOs.Response.Activity;
@@ -223,6 +225,46 @@ namespace BirdClubAPI.BusinessLayer.Services.Activity
                 StatusCode = System.Net.HttpStatusCode.OK,
                 Message = "Request created"
             };
+        }
+        public AttendanceStatusRm GetUserAttendanceStatus(int id, int memberId)
+        {
+            var activity = _activityRepository.GetActivitieWithAttendance(id);
+            if (activity == null) return new AttendanceStatusRm
+            {
+                Status = AttendanceStatusEnum.NOT_FOUND,
+                Message = AttendanceStatusConstants.NOT_FOUND,
+            };
+            if (activity.EndTime.CompareTo(DateTime.UtcNow.AddHours(7)) < 0)
+            {
+                return new AttendanceStatusRm
+                {
+                    Status = AttendanceStatusEnum.CLOSED,
+                    Message = AttendanceStatusConstants.CLOSED,
+                };
+            }
+            if (activity.AttendanceRequests.Any(e => e.MemberId == memberId))
+            {
+                return new AttendanceStatusRm
+                {
+                    Status = AttendanceStatusEnum.PENDING,
+                    Message = AttendanceStatusConstants.PENDING,
+                };
+            } else if (activity.Attendances.Any(e => e.MemberId == memberId))
+            {
+                return new AttendanceStatusRm
+                {
+                    Status = AttendanceStatusEnum.ACCEPTED,
+                    Message = AttendanceStatusConstants.ACCEPTED,
+                };
+            }
+            else
+            {
+                return new AttendanceStatusRm
+                {
+                    Status = AttendanceStatusEnum.NOT_ATTEND,
+                    Message = AttendanceStatusConstants.NOT_ATTEND,
+                };
+            }
         }
 
         public MessageViewModel UpdateActivity(int id, UpdateActivityRequestModel requestModel)
