@@ -20,5 +20,6 @@ namespace BirdClubAPI.DataAccessLayer.Repositories.Activity
         bool RemoveAttendanceRequest(AttendanceRequest request);
         Domain.Entities.Activity? GetActivitieWithAttendance(int id);
         bool UpdateActivity(Domain.Entities.Activity activity);
+        List<AttendanceRequest> GetAttendanceRequests(int activityId);
     }
 }

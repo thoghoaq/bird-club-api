@@ -205,5 +205,14 @@ namespace BirdClubAPI.DataAccessLayer.Repositories.Activity
                 return false;
             }
         }
+
+        public List<AttendanceRequest> GetAttendanceRequests(int activityId)
+        {
+            var attendanceRequests = _context.AttendanceRequests.Where(e => e.ActivityId == activityId)
+                .Include(e => e.Member)
+                    .ThenInclude(e => e.User)
+                .ToList();
+            return attendanceRequests;
+        }
     }
 }

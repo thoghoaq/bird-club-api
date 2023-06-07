@@ -20,5 +20,6 @@ namespace BirdClubAPI.BusinessLayer.Services.Activity
         AttendanceStatusRm GetUserAttendanceStatus(int id, int memberId);
         MessageViewModel UpdateActivity(int id, UpdateActivityRequestModel requestModel);
         MessageViewModel UpdateActivityStatus(int id, UpdateActivityStatusRequestModel requestModel);
+        KeyValuePair<MessageViewModel, List<AttendanceRequestRm>> GetAttendanceRequests(int id);
     }
 }
