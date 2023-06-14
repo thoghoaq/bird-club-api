@@ -24,6 +24,20 @@ namespace BirdClubAPI.DataAccessLayer.Repositories.Feedback
             _mapper = mapper;
         }
 
+        public FeedbackResponseModel? CreateFeedback(Domain.Entities.Feedback feedback)
+        {
+            try
+            {
+                var result = _context.Add(feedback);
+                _context.SaveChanges();
+                return _mapper.Map<FeedbackResponseModel>(result.Entity);
+            }
+             catch
+            {
+                return null;
+            }
+        }
+
         public List<FeedbackResponseModel> GetFeedbacks(int activityId)
         {
             var feedbacks = _context.Feedbacks
