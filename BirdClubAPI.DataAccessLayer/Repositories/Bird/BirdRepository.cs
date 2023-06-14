@@ -20,7 +20,7 @@ namespace BirdClubAPI.DataAccessLayer.Repositories.Bird
             _mapper = mapper;
         }
 
-        public List<BirdResponseModel> GetBird()
+        public List<BirdResponseModel> GetBirds()
         {
             return _context.Birds.Select(b => new BirdResponseModel
             {
@@ -30,7 +30,7 @@ namespace BirdClubAPI.DataAccessLayer.Repositories.Bird
             }).ToList();
         }
 
-        public Domain.Entities.Bird? GetBird(int id)
+        public Domain.Entities.Bird? GetBirds(int id)
         {
             return _context.Birds.Where(e => e.Id ==  id).FirstOrDefault();
         }

@@ -6,21 +6,26 @@ using System.Net;
 
 namespace BirdClubAPI.PresentationLayer.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/v1/birds")]
     [ApiController]
-    public class BirdController : ControllerBase
+    public class BirdsController : ControllerBase
     {
         private readonly IBirdService _birdService;
 
-        public BirdController(IBirdService birdService)
+        public BirdsController(IBirdService birdService)
         {
             _birdService = birdService;
         }
 
+
+        /// <summary>
+        /// APi lấy list Birds 
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
-        public ActionResult<List<BirdViewModel>> GetBird()
+        public ActionResult<List<BirdViewModel>> GetBirds()
         {
-            var response = _birdService.GetBird();
+            var response = _birdService.GetBirds();
             if (response.Key.StatusCode.Equals(HttpStatusCode.NotFound))
             {
                 return NotFound(response.Key);

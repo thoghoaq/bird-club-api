@@ -19,10 +19,10 @@ namespace BirdClubAPI.BusinessLayer.Services.Bird
             _mapper = mapper;
         }
 
-         public KeyValuePair<MessageViewModel, List<BirdViewModel>> GetBird()
+         public KeyValuePair<MessageViewModel, List<BirdViewModel>> GetBirds()
         {
-            var bird = _birdRespository.GetBird();
-            if(bird == null)
+            var birds = _birdRespository.GetBirds();
+            if(birds == null)
             {
                 return new KeyValuePair<MessageViewModel, List<BirdViewModel>>
                   (new MessageViewModel
@@ -40,7 +40,7 @@ namespace BirdClubAPI.BusinessLayer.Services.Bird
                     StatusCode = System.Net.HttpStatusCode.OK,
                     Message = string.Empty
                 },
-                  _mapper.Map<List<BirdViewModel>>(bird)
+                  _mapper.Map<List<BirdViewModel>>(birds)
                  );
          
         }

@@ -5,6 +5,6 @@ namespace BirdClubAPI.BusinessLayer.Services.Bird
 {
     public interface IBirdService
     {
-        KeyValuePair<MessageViewModel, List<BirdViewModel>> GetBird();
+        KeyValuePair<MessageViewModel, List<BirdViewModel>> GetBirds();
     }
 }

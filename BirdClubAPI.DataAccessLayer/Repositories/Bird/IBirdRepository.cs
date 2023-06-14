@@ -9,7 +9,7 @@ namespace BirdClubAPI.DataAccessLayer.Repositories.Bird
 {
     public interface IBirdRepository
     {
-        List<BirdResponseModel> GetBird();
-        Domain.Entities.Bird? GetBird(int id);
+        List<BirdResponseModel> GetBirds();
+        Domain.Entities.Bird? GetBirds(int id);
     }
 }
