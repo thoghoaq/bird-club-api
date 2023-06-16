@@ -20,6 +20,20 @@ namespace BirdClubAPI.DataAccessLayer.Repositories.Bird
             _mapper = mapper;
         }
 
+        public BirdResponseModel? CreateBird(Domain.Entities.Bird bird)
+        {
+            try
+            {
+                var result = _context.Add(bird);
+                _context.SaveChanges();
+                return _mapper.Map<BirdResponseModel>(result.Entity);
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
         public List<BirdResponseModel> GetBird()
         {
             return _context.Birds.Select(b => new BirdResponseModel
