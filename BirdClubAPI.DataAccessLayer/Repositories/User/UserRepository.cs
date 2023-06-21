@@ -33,7 +33,7 @@ namespace BirdClubAPI.DataAccessLayer.Repositories.User
                 _context.SaveChanges();
                 if (result == null) return null;
                 return result.Entity;
-            } catch (Exception ex)
+            } catch
             {
                 return null;
             }
