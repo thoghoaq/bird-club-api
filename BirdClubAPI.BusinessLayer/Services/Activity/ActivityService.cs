@@ -380,5 +380,31 @@ namespace BirdClubAPI.BusinessLayer.Services.Activity
                     );
             }
         }
+
+        public List<ActivityCalenderViewModel> GetCalenderActivitiesByMember(int memberId)
+        {
+            List<ActivityCalenderViewModel> calenderActivities = new();
+            List<ActivityResponseModel> activities = _activityRepository.GetActivities()
+                .Where(e => e.Owner.MemberId == memberId || _activityRepository.GetActivitieWithAttendance(e.Id)?.Attendances.FirstOrDefault(m => m.MemberId == memberId) != null).ToList();
+            foreach (var activity in activities)
+            {
+                List<DateTime> dateList = DateTimeManager.GetDatesInRange(activity.StartTime, activity.EndTime);
+                foreach (var date in dateList)
+                {
+                    calenderActivities.Add(new ActivityCalenderViewModel
+                    {
+                        Id = activity.Id,
+                        Name = activity.Name,
+                        ActivityType = activity.ActivityType,
+                        CreateTime = activity.CreateTime,
+                        Location = activity.Location,
+                        Date = date,
+                        StartTime = activity.StartTime.TimeOfDay.ToString(@"hh\:mm\:ss"),
+                        EndTime = activity.EndTime.TimeOfDay.ToString(@"hh\:mm\:ss"),
+                    });
+                }
+            }
+            return calenderActivities.OrderBy(e => e.Date).ToList();
+        }
     }
 }
