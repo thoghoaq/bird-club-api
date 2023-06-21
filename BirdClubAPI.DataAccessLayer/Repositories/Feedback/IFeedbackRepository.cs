@@ -1,5 +1,4 @@
-﻿using BirdClubAPI.Domain.DTOs.Request.Feedback;
-using BirdClubAPI.Domain.DTOs.Response.Bird;
+﻿using BirdClubAPI.Domain.DTOs.Response.Bird;
 using BirdClubAPI.Domain.DTOs.Response.Feedback;
 using BirdClubAPI.Domain.DTOs.View.Feedback;
 using System;

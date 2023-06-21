@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using BirdClubAPI.DataAccessLayer.Repositories.Bird;
 using BirdClubAPI.DataAccessLayer.Repositories.Feedback;
-using BirdClubAPI.Domain.DTOs.Request.Feedback;
 using BirdClubAPI.Domain.DTOs.Response.Activity;
 using BirdClubAPI.Domain.DTOs.Response.Feedback;
 using BirdClubAPI.Domain.DTOs.View.Acitivity;
@@ -30,30 +29,30 @@ namespace BirdClubAPI.BusinessLayer.Services.Feedback
             _mapper = mapper;
         }
 
-        public KeyValuePair<MessageViewModel, CreateFeedbackViewModel> CreateFeedback(CreateFeedbackRequestModel requestModel)
-        {
-            var feedback = _mapper.Map<Domain.Entities.Feedback>(requestModel);
-            var result = _feedbackRepository.CreateFeedback(feedback);
-            if (result == null)
-            {
-                return new KeyValuePair<MessageViewModel, CreateFeedbackViewModel?>(
-                    new MessageViewModel
-                    {
-                        StatusCode = System.Net.HttpStatusCode.InternalServerError,
-                        Message = "Error occur when create this feedback"
-                    }, null
-                    );
-            }
+        //public KeyValuePair<MessageViewModel, CreateFeedbackViewModel> CreateFeedback(CreateFeedbackRequestModel requestModel)
+        //{
+        //    var feedback = _mapper.Map<Domain.Entities.Feedback>(requestModel);
+        //    var result = _feedbackRepository.CreateFeedback(feedback);
+        //    if (result == null)
+        //    {
+        //        return new KeyValuePair<MessageViewModel, CreateFeedbackViewModel?>(
+        //            new MessageViewModel
+        //            {
+        //                StatusCode = System.Net.HttpStatusCode.InternalServerError,
+        //                Message = "Error occur when create this feedback"
+        //            }, null
+        //            );
+        //    }
 
-            return new KeyValuePair<MessageViewModel, CreateFeedbackViewModel?>(
-                new MessageViewModel
-                {
-                    StatusCode = System.Net.HttpStatusCode.Created,
-                    Message = string.Empty
-                }, 
-                _mapper.Map<CreateFeedbackViewModel>(result)
-                );
-         }
+        //    return new KeyValuePair<MessageViewModel, CreateFeedbackViewModel?>(
+        //        new MessageViewModel
+        //        {
+        //            StatusCode = System.Net.HttpStatusCode.Created,
+        //            Message = string.Empty
+        //        }, 
+        //        _mapper.Map<CreateFeedbackViewModel>(result)
+        //        );
+        // }
 
         public List<FeedbackViewModel> GetFeedbacks(int activityId)
         {
