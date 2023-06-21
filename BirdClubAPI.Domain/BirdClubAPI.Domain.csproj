@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <Folder Include="DTOs\Request\Newsfeed\Record\" />
+    <Folder Include="DTOs\View\Bird\" />
   </ItemGroup>
 
 </Project>

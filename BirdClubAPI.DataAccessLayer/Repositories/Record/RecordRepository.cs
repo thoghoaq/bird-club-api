@@ -1,0 +1,73 @@
+﻿using AutoMapper;
+using BirdClubAPI.DataAccessLayer.Context;
+using BirdClubAPI.Domain.DTOs.Response.Record;
+using Microsoft.EntityFrameworkCore;
+
+namespace BirdClubAPI.DataAccessLayer.Repositories.Record
+{
+    public class RecordRepository : IRecordRepository
+    {
+        private readonly BirdClubContext _context;
+        private readonly IMapper _mapper;
+
+        public RecordRepository(BirdClubContext context, IMapper mapper)
+        {
+            _context = context;
+            _mapper = mapper;
+        }
+
+        public Domain.Entities.Newsfeed? CreateRecord(int ownerId,Domain.Entities.Record record)
+        {
+            try
+            {
+                var result = _context.Newsfeeds.Add(new Domain.Entities.Newsfeed
+                {
+                    PublicationTime = DateTime.UtcNow.AddHours(7),
+                    Record = record,
+                    OwnerId = ownerId
+                });
+                _context.SaveChanges();
+                return _mapper.Map<Domain.Entities.Newsfeed>(result.Entity);
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        public List<RecordResponseModel> GetRecord()
+        {
+            return _context.Records
+                .Include(e => e.Bird)
+                .Select(b => new RecordResponseModel
+            {
+                BirdId = b.BirdId,
+                BirdName = b.Bird.Name,
+                Species = b.Bird.Species ?? string.Empty,
+                Photo = b.Photo,
+                Quantity = b.Quantity
+            }).ToList();
+        }
+
+        public List<RecordResponseModel> GetRecordByMember(int memberId)
+        {
+            return _context.Records
+                .Include(e => e.Bird)
+                .Include(e => e.Newsfeed)
+                .Where(e => e.Newsfeed.OwnerId == memberId)
+                .Select(b => new RecordResponseModel
+                {
+                    BirdId = b.BirdId,
+                    BirdName = b.Bird.Name,
+                    Species = b.Bird.Species ?? string.Empty,
+                    Quantity = b.Quantity,
+                    Photo = b.Photo
+                }).ToList();
+        }
+
+        public Domain.Entities.Record? GetRecords(int id)
+        {
+            return _context.Records.Where(e => e.BirdId ==  id).FirstOrDefault();
+        }
+    }
+}
