@@ -47,7 +47,7 @@ namespace BirdClubAPI.PresentationLayer.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        [HttpGet("blogs")]
+        [HttpGet("blogs/{id}")]
         public ActionResult<BlogViewModel> GetBlog(int id) {
             var response = _newsfeedService.GetBlog(id);
             if (response.Key.StatusCode.Equals(HttpStatusCode.NotFound))
@@ -55,6 +55,23 @@ namespace BirdClubAPI.PresentationLayer.Controllers
                 return NotFound(response.Key);
             }
             return Ok(response.Value);
+        }
+
+        /// <summary>
+        /// Update blog
+        /// </summary>
+        [HttpPut("blogs/{id}")]
+        public ActionResult<BlogViewModel> UpdateBlog(int id, UpdateBlogRm request)
+        {
+            var response = _newsfeedService.UpdateBlog(id, request);
+            if (response.Key.StatusCode.Equals(HttpStatusCode.NotFound))
+            {
+                return NotFound(response.Key);
+            } else if (response.Key.StatusCode.Equals(HttpStatusCode.InternalServerError))
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, response.Key);
+            }
+            return NoContent();
         }
     }
 }
