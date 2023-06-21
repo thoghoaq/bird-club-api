@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 
 using BirdClubAPI.DataAccessLayer.Repositories.Bird;
-
+using BirdClubAPI.Domain.DTOs.Request.Bird;
 using BirdClubAPI.Domain.DTOs.View.Bird;
 using BirdClubAPI.Domain.DTOs.View.Common;
 
@@ -19,9 +19,34 @@ namespace BirdClubAPI.BusinessLayer.Services.Bird
             _mapper = mapper;
         }
 
-         public KeyValuePair<MessageViewModel, List<BirdViewModel>> GetBirds()
+        public KeyValuePair<MessageViewModel, AddBirdViewModel?> AddBird(AddBirdRequestModel requestModel)
         {
-            var birds = _birdRespository.GetBirds();
+            var bird = _mapper.Map<Domain.Entities.Bird>(requestModel);
+            var result = _birdRespository.CreateBird(bird);
+            if (result == null)
+            {
+                return new KeyValuePair<MessageViewModel, AddBirdViewModel?>(
+                    new MessageViewModel
+                    {
+                        StatusCode = System.Net.HttpStatusCode.InternalServerError,
+                        Message = "Error occurs when insert this bird"
+                    }, null
+                    );
+            }
+
+            return new KeyValuePair<MessageViewModel, AddBirdViewModel?>(
+                new MessageViewModel
+                {
+                    StatusCode = System.Net.HttpStatusCode.Created,
+                    Message = string.Empty
+                },
+                _mapper.Map<AddBirdViewModel>(result)
+                );
+        }
+
+        public KeyValuePair<MessageViewModel, List<BirdViewModel>> GetBird()
+        {
+            var birds = _birdRespository.GetBird();
             if(birds == null)
             {
                 return new KeyValuePair<MessageViewModel, List<BirdViewModel>>
@@ -44,7 +69,5 @@ namespace BirdClubAPI.BusinessLayer.Services.Bird
                  );
          
         }
-
-
     }
 }

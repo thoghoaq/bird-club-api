@@ -21,7 +21,7 @@ namespace BirdClubAPI.Core.DependencyInjection
         public static IServiceCollection ConfigureDependencyInjection(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddDbContext<DbContext, BirdClubContext>(opts => opts.UseSqlServer(
-                configuration.GetConnectionString("BirdClub")
+                configuration.GetConnectionString("BirdClub")!
             ));
 
             services.AddScoped<INewsfeedService, NewsfeedService>();

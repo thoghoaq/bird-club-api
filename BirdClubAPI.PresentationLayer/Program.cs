@@ -11,6 +11,16 @@ builder.Services.ConfigureAutoMapper();
 builder.Services.ConfigureSwaggerServices("BirdClub.APIs");
 builder.Services.ConfigureAuthServices(builder.Configuration);
 
+var myCors = "MyCors";
+builder.Services.AddCors(
+    opt => opt.AddPolicy(myCors,
+                x => x
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                    .AllowCredentials()
+                    .SetIsOriginAllowed(origin => true)
+                ));
+
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -23,6 +33,8 @@ app.UseSwagger();
 app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
+
+app.UseCors(myCors);
 
 app.UseAuthApps();
 

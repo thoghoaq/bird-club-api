@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using BirdClubAPI.Domain.DTOs.Request.Feedback;
 using BirdClubAPI.Domain.DTOs.Response.Bird;
 using BirdClubAPI.Domain.DTOs.Response.Feedback;
 using BirdClubAPI.Domain.DTOs.View.Bird;
@@ -14,8 +13,6 @@ namespace BirdClubAPI.PresentationLayer.Configurations.AutoMapper.Modules
         {
             mc.CreateMap<FeedbackResponseModel, FeedbackViewModel>().ReverseMap();
             mc.CreateMap<Feedback, FeedbackResponseModel>().ReverseMap();
-            mc.CreateMap<Feedback, CreateFeedbackRequestModel>().ReverseMap();
-            mc.CreateMap<FeedbackResponseModel, CreateFeedbackViewModel>().ReverseMap();
         }
     }
 }
