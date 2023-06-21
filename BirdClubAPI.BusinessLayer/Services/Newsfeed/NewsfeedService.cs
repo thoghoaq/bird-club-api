@@ -57,7 +57,7 @@ namespace BirdClubAPI.BusinessLayer.Services.Newsfeed
         public KeyValuePair<MessageViewModel, BlogViewModel?> GetBlog(int id)
         {
             var blog = _newsfeedRepository.GetBlogs(id);
-            if(blog == null)
+            if (blog == null)
             {
                 return new KeyValuePair<MessageViewModel, BlogViewModel?>
                     (
@@ -90,6 +90,54 @@ namespace BirdClubAPI.BusinessLayer.Services.Newsfeed
                 Newsfeeds = newsfeeds
             };
             return response;
+        }
+
+        public KeyValuePair<MessageViewModel, BlogViewModel?> UpdateBlog(int id, UpdateBlogRm request)
+        {
+            var blog = _newsfeedRepository.GetBlogs(id);
+            if (blog == null)
+            {
+                return new KeyValuePair<MessageViewModel, BlogViewModel?>(
+                new MessageViewModel
+                {
+                    StatusCode = System.Net.HttpStatusCode.NotFound,
+                    Message = "Not found this blog"
+                },
+                null
+                );
+            }
+            var entity = _mapper.Map<Blog>(blog);
+            if (request.Title != null)
+            {
+                entity.Title = request.Title;
+            }
+
+            if (request.Content != null)
+            {
+                entity.Content = request.Content;
+            }
+
+            var result = _newsfeedRepository.UpdateBlog(entity);
+            if (result == false)
+            {
+                return new KeyValuePair<MessageViewModel, BlogViewModel?>(
+                new MessageViewModel
+                {
+                    StatusCode = System.Net.HttpStatusCode.InternalServerError,
+                    Message = "Update blog fail"
+                },
+                null
+                );
+            }
+
+            return new KeyValuePair<MessageViewModel, BlogViewModel?>(
+                new MessageViewModel
+                {
+                    StatusCode = System.Net.HttpStatusCode.NoContent,
+                    Message = "Update blog success"
+                },
+                null
+                );
         }
     }
 }
