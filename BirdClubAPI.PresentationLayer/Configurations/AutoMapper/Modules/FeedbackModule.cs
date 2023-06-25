@@ -1,7 +1,5 @@
 ﻿using AutoMapper;
-using BirdClubAPI.Domain.DTOs.Response.Bird;
 using BirdClubAPI.Domain.DTOs.Response.Feedback;
-using BirdClubAPI.Domain.DTOs.View.Bird;
 using BirdClubAPI.Domain.DTOs.View.Feedback;
 using BirdClubAPI.Domain.Entities;
 

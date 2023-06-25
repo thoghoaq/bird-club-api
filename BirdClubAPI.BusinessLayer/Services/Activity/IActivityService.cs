@@ -15,6 +15,7 @@ namespace BirdClubAPI.BusinessLayer.Services.Activity
         KeyValuePair<MessageViewModel, List<AttendanceViewModel?>> GetAttendance(int id);
         List<AcitivityViewModel> GetActivitiesByOwner(int ownerId);
         List<ActivityCalenderViewModel> GetCalenderActivities();
+        List<ActivityCalenderViewModel> GetCalenderActivitiesByMember(int memberId);
         MessageViewModel PostAttendance(int memberId, int activityId);
         MessageViewModel RequestAttendance(int memberId, int activityId);
         AttendanceStatusRm GetUserAttendanceStatus(int id, int memberId);

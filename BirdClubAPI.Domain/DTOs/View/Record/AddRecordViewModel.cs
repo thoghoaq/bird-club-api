@@ -1,6 +1,6 @@
-﻿namespace BirdClubAPI.Domain.DTOs.Response.Bird
+﻿namespace BirdClubAPI.Domain.DTOs.View.Record
 {
-    public class BirdResponseModel
+    public class AddRecordViewModel
     {
         public string Name { get; set; } = null!;
         public string? Species { get; set; }
