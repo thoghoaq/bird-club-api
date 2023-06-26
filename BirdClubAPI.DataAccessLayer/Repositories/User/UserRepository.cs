@@ -47,10 +47,10 @@ namespace BirdClubAPI.DataAccessLayer.Repositories.User
                     Email = requestModel.Email,
                     Password = requestModel.Password,
                     DisplayName = requestModel.DisplayName,
-                    UserType = "GUEST",
+                    UserType = UserTypeConstants.MEMBER,
+                    Birthday = DateOnly.Parse(requestModel.Birthday),
                     Member = new Domain.Entities.Member
                     {
-                        Birthday = DateOnly.Parse(requestModel.Birthday),
                         MembershipStatus = true,
                     }
                 };

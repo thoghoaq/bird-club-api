@@ -33,7 +33,7 @@ namespace BirdClubAPI.DataAccessLayer.Repositories.Member
                 UserId = e.UserId,
                 User = _mapper.Map<UserResponseModel>(e.User),
                 About = e.About,
-                Birthday = e.Birthday != null ? e.Birthday.ToString() : null
+                Birthday = e.User.Birthday != null ? e.User.Birthday.ToString() : null
             }).ToList();
         }
 
