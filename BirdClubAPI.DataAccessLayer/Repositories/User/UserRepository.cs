@@ -23,9 +23,9 @@ namespace BirdClubAPI.DataAccessLayer.Repositories.User
                     Password = requestModel.Password,
                     DisplayName = requestModel.DisplayName,
                     UserType = UserTypeConstants.MEMBER,
+                    Birthday = DateOnly.Parse(requestModel.Birthday),
                     Member = new Domain.Entities.Member
                     {
-                        Birthday = DateOnly.Parse(requestModel.Birthday),
                         MembershipStatus = true,
                     }
                 };

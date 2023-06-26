@@ -260,9 +260,6 @@ namespace BirdClubAPI.DataAccessLayer.Context
                     .HasMaxLength(13)
                     .IsUnicode(false);
 
-                entity.Property(e => e.Birthday)
-                    .HasConversion<DateOnlyConverter, DateOnlyComparer>();
-
                 entity.Property(e => e.About).HasMaxLength(2000);
 
                 entity.HasOne(d => d.User)
@@ -331,6 +328,9 @@ namespace BirdClubAPI.DataAccessLayer.Context
                     .IsUnique();
 
                 entity.Property(e => e.DisplayName).HasMaxLength(50);
+
+                entity.Property(e => e.Birthday)
+                    .HasConversion<DateOnlyConverter, DateOnlyComparer>();
 
                 entity.Property(e => e.Email)
                     .HasMaxLength(50)
