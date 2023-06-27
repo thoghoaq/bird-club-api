@@ -29,8 +29,10 @@ namespace BirdClubAPI.DataAccessLayer.Repositories.User
                 var member = new Domain.Entities.Member
                 {
                     UserId = user.Id,
+                    MembershipStatus = true,
                 };
                 _context.Members.Add(member);
+                _context.SaveChanges();
                 
 
                 return user;
@@ -49,10 +51,6 @@ namespace BirdClubAPI.DataAccessLayer.Repositories.User
                     DisplayName = requestModel.DisplayName,
                     UserType = UserTypeConstants.GUEST,
                     Birthday = DateOnly.Parse(requestModel.Birthday),
-                    Member = new Domain.Entities.Member
-                    {
-                        MembershipStatus = true,
-                    }
                 };
                 var result = _context.Add(user);
                 _context.SaveChanges();
