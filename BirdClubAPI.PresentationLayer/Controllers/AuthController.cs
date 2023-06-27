@@ -1,5 +1,6 @@
 ﻿using BirdClubAPI.BusinessLayer.Services.Auth;
 using BirdClubAPI.Domain.DTOs.Request.Auth;
+using BirdClubAPI.Domain.DTOs.View.Auth;
 using BirdClubAPI.Domain.DTOs.View.Common;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
@@ -45,6 +46,29 @@ namespace BirdClubAPI.PresentationLayer.Controllers
                     StatusCode = HttpStatusCode.BadRequest,
                     Message = "Invalid user"
                 });
+            }
+        }
+        [HttpGet("listguest")]
+        public ActionResult <List<GuestViewModel>> GetListGuest()
+        {
+            var response = _authService.GetListGuest();
+            if (response.Key.StatusCode.Equals(HttpStatusCode.NotFound))
+            {
+                return NotFound(response.Key);
+            }
+            return Ok(response.Value);
+        }
+        [HttpPost("{id}/approve")]
+        public ActionResult ApproveMember(int id)
+        {
+            var reponse = _authService.ApproveMember(id);
+            if(reponse.StatusCode == HttpStatusCode.OK)
+            {
+                return Ok(reponse);
+            }
+            else
+            {
+                return NotFound(reponse);
             }
         }
     }
