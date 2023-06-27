@@ -2,6 +2,7 @@
 {
     public static class UserTypeConstants
     {
+        public const string GUEST = "GUEST";
         public const string MEMBER = "MEMBER";
         public const string ADMIN = "ADMIN";
     }

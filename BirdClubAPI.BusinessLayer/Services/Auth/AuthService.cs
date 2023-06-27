@@ -4,6 +4,7 @@ using BirdClubAPI.Domain.Commons.Utils;
 using BirdClubAPI.Domain.DTOs.Request.Auth;
 using BirdClubAPI.Domain.DTOs.View.Auth;
 using BirdClubAPI.Domain.DTOs.View.Common;
+using BirdClubAPI.Domain.DTOs.View.Member;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.Net;
@@ -21,6 +22,53 @@ namespace BirdClubAPI.BusinessLayer.Services.Auth
             _userRepository = userRepository;
             _mapper = mapper;
             _configuration = configuration;
+        }
+
+        public MessageViewModel ApproveMember(int id)
+        {
+            var approve = _userRepository.ApproveMember(id);
+            if (approve == null)
+            {
+                return new MessageViewModel
+                {
+                    StatusCode = System.Net.HttpStatusCode.NotFound,
+                    Message = string.Empty
+                };
+            }
+            else
+            {
+                return new MessageViewModel
+                {
+                    StatusCode = System.Net.HttpStatusCode.OK,
+                    Message = string.Empty
+                };
+            }
+
+        }
+
+        public KeyValuePair<MessageViewModel, List<GuestViewModel?>> GetListGuest()
+        {
+            var guest = _userRepository.GetListGuest();
+            if (guest == null)
+            {
+                return new KeyValuePair<MessageViewModel, List<GuestViewModel?>>(
+                    new MessageViewModel
+                    {
+                        StatusCode = System.Net.HttpStatusCode.NotFound,
+                        Message = "There are no any guest"
+                    },
+                    new List<GuestViewModel?>()
+                    );
+            }
+            return new KeyValuePair<MessageViewModel, List<GuestViewModel?>>(
+
+                new MessageViewModel
+                {
+                    StatusCode = System.Net.HttpStatusCode.OK,
+                    Message = string.Empty
+                },
+                _mapper.Map<List<GuestViewModel?>>(guest)
+                );
         }
 
         public KeyValuePair<MessageViewModel, AuthViewModel?> Login(LoginFormRequestModel loginFormRequest)
