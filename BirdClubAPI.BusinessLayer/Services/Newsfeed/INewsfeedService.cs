@@ -10,6 +10,7 @@ namespace BirdClubAPI.BusinessLayer.Services.Newsfeed
     {
         KeyValuePair<MessageViewModel, BlogViewModel?> CreateBlog(CreateBlogRequestModel requestModel);
         KeyValuePair<MessageViewModel, BlogViewModel?> GetBlog(int id);
+        NewsfeedViewModel GetNewsFeed(int memberid);
         NewsfeedViewModel GetNewsfeeds(int limit, int page, int size);
         KeyValuePair<MessageViewModel, BlogViewModel?> UpdateBlog(int id, UpdateBlogRm request);
     }
