@@ -7,7 +7,7 @@ namespace BirdClubAPI.DataAccessLayer.Repositories.User
     {
         Domain.Entities.User? Get(string email, string password);
         Domain.Entities.User? Create(RegisterRequestModel requestModel);
-        List<GuestViewModel> GetListGuest();
+        List<GuestViewModel>? GetListGuest();
         Domain.Entities.User? ApproveMember(int userId);
     }
 }
