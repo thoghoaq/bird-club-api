@@ -25,8 +25,8 @@ namespace BirdClubAPI.PresentationLayer.Controllers
         /// {size} is number records of a page
         /// </summary>
         [HttpGet]
-        public ActionResult<NewsfeedViewModel> GetNewsfeeds(int limit, int page, int size) {
-            return Ok(_newsfeedService.GetNewsfeeds(limit, page, size));
+        public ActionResult<NewsfeedViewModel> GetNewsfeeds(int page, int size) {
+            return Ok(_newsfeedService.GetNewsfeeds(page, size));
         }
 
         /// <summary>

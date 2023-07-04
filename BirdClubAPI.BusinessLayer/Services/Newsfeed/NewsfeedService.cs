@@ -95,12 +95,12 @@ namespace BirdClubAPI.BusinessLayer.Services.Newsfeed
             return response;
         }
 
-        public NewsfeedViewModel GetNewsfeeds(int limit, int page, int size)
+        public NewsfeedViewModel GetNewsfeeds(int page, int size)
         {
-            var newsfeeds = _newsfeedRepository.GetNewsfeeds(limit, page, size);
+            var newsfeeds = _newsfeedRepository.GetNewsfeeds(page, size);
             var response = new NewsfeedViewModel
             {
-                Total = newsfeeds.Count,
+                Total = _newsfeedRepository.GetNewsFeedCount(),
                 Newsfeeds = newsfeeds
             };
             return response;

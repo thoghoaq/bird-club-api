@@ -6,10 +6,11 @@ namespace BirdClubAPI.DataAccessLayer.Repositories.Newsfeed
 {
     public interface INewsfeedRepository
     {
-        List<NewsfeedResponseModel> GetNewsfeeds(int limit, int page, int size);
+        List<NewsfeedResponseModel> GetNewsfeeds(int page, int size);
         Domain.Entities.Newsfeed? Create(Domain.Entities.Newsfeed newsfeed);
         BlogDetailResponseModel? GetBlogs(int id);
         bool UpdateBlog(Domain.Entities.Blog blog);
         List<NewsfeedResponseModel> GetNewsFeed(int memberid);
+        int GetNewsFeedCount();
     }
 }

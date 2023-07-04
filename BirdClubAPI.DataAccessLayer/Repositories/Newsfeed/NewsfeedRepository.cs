@@ -69,10 +69,14 @@ namespace BirdClubAPI.DataAccessLayer.Repositories.Newsfeed
             return _mapper.Map<List<NewsfeedResponseModel>>(response);
         }
 
-        public List<NewsfeedResponseModel> GetNewsfeeds(int limit, int page, int size)
+        public int GetNewsFeedCount()
+        {
+            return _context.Newsfeeds.Count();
+        }
+
+        public List<NewsfeedResponseModel> GetNewsfeeds(int page, int size)
         {
             var response = _mapper.ProjectTo<NewsfeedResponseModel>(_context.Newsfeeds
-                .Take(limit > 0 ? limit : int.MaxValue)
                 .Skip(page > 0 ? (page - 1) * size : 0)
                 .Take(size)
                 .OrderByDescending(e => e.PublicationTime)
