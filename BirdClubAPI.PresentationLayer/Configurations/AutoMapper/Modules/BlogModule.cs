@@ -11,6 +11,9 @@ namespace BirdClubAPI.PresentationLayer.Configurations.AutoMapper.Modules
         {
             mc.CreateMap<Blog, BlogResponseModel>().ReverseMap();
             mc.CreateMap<BlogDetailResponseModel, BlogViewModel>().ReverseMap();
+            mc.CreateMap<BlogDetailResponseModel, Blog>()
+                .ForMember(dest => dest.NewsfeedId, opts => opts.MapFrom(src => src.Id))
+                .ReverseMap();
         }
     }
 }
