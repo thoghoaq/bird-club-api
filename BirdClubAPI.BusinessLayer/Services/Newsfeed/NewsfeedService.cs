@@ -7,6 +7,8 @@ using BirdClubAPI.Domain.DTOs.View.Blog;
 using BirdClubAPI.Domain.DTOs.Request.Newsfeed.Blog;
 using BirdClubAPI.Domain.Entities;
 using BirdClubAPI.Domain.DTOs.Response.Blog;
+using BirdClubAPI.Domain.DTOs.Response.Activity;
+using BirdClubAPI.Domain.DTOs.Response.Newsfeed;
 
 namespace BirdClubAPI.BusinessLayer.Services.Newsfeed
 {
@@ -79,6 +81,18 @@ namespace BirdClubAPI.BusinessLayer.Services.Newsfeed
                 response
                 );
 
+        }
+
+        public NewsfeedViewModel GetNewsFeed(int memberid)
+        {
+
+            var newsfeed =_newsfeedRepository.GetNewsFeed(memberid);
+            var response = new NewsfeedViewModel
+            {
+                Total = newsfeed.Count,
+                Newsfeeds = newsfeed
+            };
+            return response;
         }
 
         public NewsfeedViewModel GetNewsfeeds(int limit, int page, int size)
