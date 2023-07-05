@@ -73,5 +73,12 @@ namespace BirdClubAPI.PresentationLayer.Controllers
             }
             return NoContent();
         }
+
+        [HttpGet("by-member/{memberid}")]
+        public ActionResult <NewsfeedViewModel> GetNewsFeed(int memberid)
+        {
+            var response = _newsfeedService.GetNewsFeed(memberid);          
+            return Ok(response);
+        }
     }
 }

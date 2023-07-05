@@ -55,6 +55,20 @@ namespace BirdClubAPI.DataAccessLayer.Repositories.Newsfeed
             return response;
         }
 
+        public List<NewsfeedResponseModel> GetNewsFeed(int memberid)
+        {
+            var response = _context.Newsfeeds
+                .Where(e => e.OwnerId == memberid)
+                .Include(e => e.Owner)
+                    .ThenInclude(e => e.User)
+                .Include(e => e.Blog)
+                .Include(e => e.Record)
+                    .ThenInclude(e => e.Bird)  
+                   .OrderBy(e => e.Id)
+                .ToList();
+            return _mapper.Map<List<NewsfeedResponseModel>>(response);
+        }
+
         public List<NewsfeedResponseModel> GetNewsfeeds(int limit, int page, int size)
         {
             var response = _mapper.ProjectTo<NewsfeedResponseModel>(_context.Newsfeeds

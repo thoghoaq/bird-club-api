@@ -10,5 +10,6 @@ namespace BirdClubAPI.DataAccessLayer.Repositories.Newsfeed
         Domain.Entities.Newsfeed? Create(Domain.Entities.Newsfeed newsfeed);
         BlogDetailResponseModel? GetBlogs(int id);
         bool UpdateBlog(Domain.Entities.Blog blog);
+        List<NewsfeedResponseModel> GetNewsFeed(int memberid);
     }
 }
