@@ -10,5 +10,6 @@ namespace BirdClubAPI.DataAccessLayer.Repositories.Record
         List<RecordResponseModel> GetRecordByMember(int memberId);
         Domain.Entities.Record? GetNewfeed(int recordId);
         bool EditRecord(Domain.Entities.Record record);
+        Domain.Entities.Record? DeleteRecord(int id);
     }
 }

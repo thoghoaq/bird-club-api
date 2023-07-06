@@ -10,5 +10,6 @@ namespace BirdClubAPI.BusinessLayer.Services.Record
         KeyValuePair<MessageViewModel, RecordViewModel?> AddRecord(AddRecordRequestModel requestModel);
         KeyValuePair<MessageViewModel, List<RecordViewModel>> GetRecordsOfMember(int memberId);
         MessageViewModel EditRecord(int recordId, EditRecordRequestModel requestModel);
+        MessageViewModel DeleteRecord(int id);
     }
 }

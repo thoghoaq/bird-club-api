@@ -83,5 +83,18 @@ namespace BirdClubAPI.PresentationLayer.Controllers
                 return StatusCode(500);
             }
         }
+        [HttpDelete("{id}/delete-record")]
+        public IActionResult DeleteRecord(int id)
+        {
+            var reponse = _recordService.DeleteRecord(id);
+            if(reponse != null)
+            {
+                return Ok(reponse);
+            }
+            else
+            {
+                return NoContent();
+            }
+        }
     }
 }
