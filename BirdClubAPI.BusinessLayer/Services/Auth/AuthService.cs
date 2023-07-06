@@ -109,5 +109,26 @@ namespace BirdClubAPI.BusinessLayer.Services.Auth
             if (model == null) return false;
             return true;
         }
+
+        public MessageViewModel RejectUser(int id)
+        {
+            var user = _userRepository.RejectUser(id);
+            if (user != null)
+            {
+                return new MessageViewModel
+                {
+                    StatusCode = System.Net.HttpStatusCode.NoContent,
+                    Message = string.Empty
+                };
+            }
+            else
+            {
+                return new MessageViewModel
+                {
+                    StatusCode = System.Net.HttpStatusCode.OK,
+                    Message = string.Empty
+                };
+            }
+        }
     }
 }
