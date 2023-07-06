@@ -1,6 +1,5 @@
 ﻿using BirdClubAPI.Domain.DTOs.Response.Record;
 
-
 namespace BirdClubAPI.DataAccessLayer.Repositories.Record
 {
     public interface IRecordRepository
@@ -9,5 +8,7 @@ namespace BirdClubAPI.DataAccessLayer.Repositories.Record
         List<RecordResponseModel> GetRecord();
         Domain.Entities.Newsfeed? CreateRecord(int ownerId, Domain.Entities.Record requestModel);
         List<RecordResponseModel> GetRecordByMember(int memberId);
+        Domain.Entities.Record? GetNewfeed(int recordId);
+        bool EditRecord(Domain.Entities.Record record);
     }
 }

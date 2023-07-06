@@ -35,6 +35,27 @@ namespace BirdClubAPI.DataAccessLayer.Repositories.Record
             }
         }
 
+        public bool EditRecord(Domain.Entities.Record record)
+        {
+            try
+            {
+
+                _context.Records.Update(record);
+                _context.SaveChanges();
+                return true;
+
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public Domain.Entities.Record? GetNewfeed(int recordId)
+        {
+            return _context.Records.Where(e => e.NewsfeedId== recordId).FirstOrDefault();
+        }
+
         public List<RecordResponseModel> GetRecord()
         {
             return _context.Records
