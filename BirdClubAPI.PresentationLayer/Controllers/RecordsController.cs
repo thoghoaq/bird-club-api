@@ -1,5 +1,6 @@
 ﻿
 using BirdClubAPI.BusinessLayer.Services.Record;
+using BirdClubAPI.Domain.DTOs.Request.Member;
 using BirdClubAPI.Domain.DTOs.Request.Record;
 using BirdClubAPI.Domain.DTOs.View.Record;
 using Microsoft.AspNetCore.Mvc;
@@ -61,6 +62,26 @@ namespace BirdClubAPI.PresentationLayer.Controllers
                 return BadRequest(result.Key);
             }
             return CreatedAtAction("AddRecord", result.Key);
+        }
+        /// <summary>
+        /// API edit record
+        /// </summary>
+        [HttpPut("{id}")]
+        public IActionResult EditRecord(int id, EditRecordRequestModel requestModel)
+        {
+            var response = _recordService.EditRecord(id, requestModel);
+            if (response.StatusCode == HttpStatusCode.NoContent)
+            {
+                return Ok(response);
+            }
+            else if (response.StatusCode == HttpStatusCode.NotFound)
+            {
+                return NotFound(response);
+            }
+            else
+            {
+                return StatusCode(500);
+            }
         }
     }
 }
