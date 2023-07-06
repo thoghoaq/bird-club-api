@@ -1,4 +1,5 @@
 ﻿using BirdClubAPI.BusinessLayer.Services.Newsfeed;
+using BirdClubAPI.Domain.DTOs.Request.Attendance;
 using BirdClubAPI.Domain.DTOs.Request.Newsfeed.Blog;
 using BirdClubAPI.Domain.DTOs.View.Blog;
 using BirdClubAPI.Domain.DTOs.View.Newsfeed;
@@ -79,6 +80,21 @@ namespace BirdClubAPI.PresentationLayer.Controllers
         {
             var response = _newsfeedService.GetNewsFeed(memberid);          
             return Ok(response);
+        }
+        /// <summary>
+        /// API Like in newsfeed
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [HttpPost("like")]
+        public IActionResult PostLiked(LikeRequestModel request)
+        {
+            var result = _newsfeedService.PostLiked(request.MemberId, request.NewsFeedId);
+            if (result.StatusCode.Equals(HttpStatusCode.OK))
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
         }
     }
 }
