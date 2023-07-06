@@ -12,7 +12,7 @@ namespace BirdClubAPI.DataAccessLayer.Repositories.Activity
         List<ActivityResponseModel> GetActivities();
         Domain.Entities.Activity? GetActivities(int id);
         Domain.Entities.Activity? GetActivity(int activityId);
-        List<MemberResponseModel> GetAttendance();
+        List<MemberResponseModel> GetAttendance(int activityId);
         List<ActivityResponseModel> GetActivitiesByOwner(int ownerId);
         AttendanceRequest? GetAttendanceRequest(int memberId, int activityId);
         Attendance? PostAttendance(int memberId, int activityId);

@@ -119,7 +119,7 @@ namespace BirdClubAPI.BusinessLayer.Services.Activity
             }
             else
             {
-                var response = _activityRepository.GetAttendance();
+                var response = _activityRepository.GetAttendance(id);
                 if (response == null)
                 {
                     return new KeyValuePair<MessageViewModel, List<AttendanceViewModel?>>(
