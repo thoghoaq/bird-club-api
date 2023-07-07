@@ -8,6 +8,7 @@ using BirdClubAPI.Domain.Entities;
 using BirdClubAPI.Domain.DTOs.Response.Comment;
 using BirdClubAPI.Domain.DTOs.Request.Newsfeed.Comment;
 using BirdClubAPI.DataAccessLayer.Repositories.Comment;
+using Microsoft.IdentityModel.Tokens;
 
 namespace BirdClubAPI.BusinessLayer.Services.Newsfeed
 {
@@ -99,6 +100,16 @@ namespace BirdClubAPI.BusinessLayer.Services.Newsfeed
         public NewsfeedViewModel GetNewsfeeds(int page, int size)
         {
             var newsfeeds = _newsfeedRepository.GetNewsfeeds(page, size);
+            if (newsfeeds != null)
+            {
+                foreach (var item in newsfeeds)
+                {
+                    if (item.Blog != null)
+                    {
+                        item.Blog.Comments = item.Blog.Comments.OrderByDescending(e => e.PublicationTime).ToList();
+                    }
+                }
+            }
             var response = new NewsfeedViewModel
             {
                 Total = _newsfeedRepository.GetNewsFeedCount(),
