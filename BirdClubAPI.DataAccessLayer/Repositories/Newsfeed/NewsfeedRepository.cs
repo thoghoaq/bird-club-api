@@ -1,12 +1,10 @@
 ﻿using AutoMapper;
-using AutoMapper.QueryableExtensions;
 using BirdClubAPI.DataAccessLayer.Context;
 using BirdClubAPI.Domain.DTOs.Response.Blog;
 using BirdClubAPI.Domain.DTOs.Response.Member;
 using BirdClubAPI.Domain.DTOs.Response.Newsfeed;
 using BirdClubAPI.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
 
 namespace BirdClubAPI.DataAccessLayer.Repositories.Newsfeed
 {
@@ -35,7 +33,7 @@ namespace BirdClubAPI.DataAccessLayer.Repositories.Newsfeed
             }
         }
 
-        public Like? GetBlog(int memberId, int newsfeedId)
+        public Domain.Entities.Like? GetLike(int memberId, int newsfeedId)
         {
             var request = _context.Likes.FirstOrDefault(e => e.Owner.UserId == memberId && e.ReferenceNavigation.NewsfeedId == newsfeedId);
             return request;
@@ -101,11 +99,11 @@ namespace BirdClubAPI.DataAccessLayer.Repositories.Newsfeed
             return response;
         }
 
-        public Like? PostLiked(int memberId, int newsfeedId)
+        public Domain.Entities.Like? PostLiked(int memberId, int newsfeedId)
         {
             try
             {
-                var result = _context.Likes.Add(new Like
+                var result = _context.Likes.Add(new Domain.Entities.Like
                 {
                     OwnerId = memberId,
                     ReferenceId = newsfeedId,
@@ -121,7 +119,7 @@ namespace BirdClubAPI.DataAccessLayer.Repositories.Newsfeed
             }
         }
 
-        public bool Unliked(Like alreadyLiked)
+        public bool Unliked(Domain.Entities.Like alreadyLiked)
         {
             try
             {

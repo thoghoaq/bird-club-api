@@ -8,7 +8,7 @@ using BirdClubAPI.Domain.Entities;
 using BirdClubAPI.Domain.DTOs.Response.Comment;
 using BirdClubAPI.Domain.DTOs.Request.Newsfeed.Comment;
 using BirdClubAPI.DataAccessLayer.Repositories.Comment;
-using Microsoft.IdentityModel.Tokens;
+using BirdClubAPI.DataAccessLayer.Repositories.Like;
 
 namespace BirdClubAPI.BusinessLayer.Services.Newsfeed
 {
@@ -17,12 +17,14 @@ namespace BirdClubAPI.BusinessLayer.Services.Newsfeed
         private readonly INewsfeedRepository _newsfeedRepository;
         private readonly IMapper _mapper;
         private readonly ICommentRepository _commentRepository;
+        private readonly ILikeRepository _likeRepository;
 
-        public NewsfeedService(INewsfeedRepository newsfeedRepository, IMapper mapper, ICommentRepository commentRepository)
+        public NewsfeedService(INewsfeedRepository newsfeedRepository, IMapper mapper, ICommentRepository commentRepository, ILikeRepository likeRepository)
         {
             _newsfeedRepository = newsfeedRepository;
             _mapper = mapper;
             _commentRepository = commentRepository;
+            _likeRepository = likeRepository;
         }
 
         public KeyValuePair<MessageViewModel, BlogViewModel?> CreateBlog(CreateBlogRequestModel requestModel)
@@ -97,7 +99,7 @@ namespace BirdClubAPI.BusinessLayer.Services.Newsfeed
             return response;
         }
 
-        public NewsfeedViewModel GetNewsfeeds(int page, int size)
+        public NewsfeedViewModel GetNewsfeeds(int page, int size, int? memberId = null)
         {
             var newsfeeds = _newsfeedRepository.GetNewsfeeds(page, size);
             if (newsfeeds != null)
@@ -107,6 +109,9 @@ namespace BirdClubAPI.BusinessLayer.Services.Newsfeed
                     if (item.Blog != null)
                     {
                         item.Blog.Comments = item.Blog.Comments.OrderByDescending(e => e.PublicationTime).ToList();
+                        var likes = _likeRepository.GetLikes(item.Id);
+                        item.Blog.LikeCount = likes.Count;
+                        item.Blog.IsLiked = memberId != null && likes.Any(e => e.OwnerId == memberId);
                     }
                 }
             }
@@ -142,7 +147,7 @@ namespace BirdClubAPI.BusinessLayer.Services.Newsfeed
 
         public MessageViewModel PostLiked(int memberId, int newsfeedId)
         {
-            var alreadyLiked = _newsfeedRepository.GetBlog(memberId, newsfeedId);
+            var alreadyLiked = _newsfeedRepository.GetLike(memberId, newsfeedId);
             if (alreadyLiked == null)
             {
                 var like = _newsfeedRepository.PostLiked(memberId, newsfeedId);

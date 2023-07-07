@@ -10,6 +10,7 @@ using BirdClubAPI.DataAccessLayer.Repositories.Activity;
 using BirdClubAPI.DataAccessLayer.Repositories.Bird;
 using BirdClubAPI.DataAccessLayer.Repositories.Comment;
 using BirdClubAPI.DataAccessLayer.Repositories.Feedback;
+using BirdClubAPI.DataAccessLayer.Repositories.Like;
 using BirdClubAPI.DataAccessLayer.Repositories.Member;
 using BirdClubAPI.DataAccessLayer.Repositories.Newsfeed;
 using BirdClubAPI.DataAccessLayer.Repositories.Record;
@@ -48,6 +49,7 @@ namespace BirdClubAPI.Core.DependencyInjection
             services.AddTransient<IBirdRepository, BirdRepository>();
 
             services.AddTransient<ICommentRepository, CommentRepository>();
+            services.AddTransient<ILikeRepository, LikeRepository>();
 
             return services;
         }
