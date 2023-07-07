@@ -35,6 +35,12 @@ namespace BirdClubAPI.DataAccessLayer.Repositories.Newsfeed
             }
         }
 
+        public Like? GetBlog(int memberId, int newsfeedId)
+        {
+            var request = _context.Likes.FirstOrDefault(e => e.Owner.UserId == memberId && e.ReferenceNavigation.NewsfeedId == newsfeedId);
+            return request;
+        }
+
         public BlogDetailResponseModel? GetBlogs(int id)
         {
             var response = _context.Newsfeeds
@@ -90,6 +96,40 @@ namespace BirdClubAPI.DataAccessLayer.Repositories.Newsfeed
             return response;
         }
 
+        public Like? PostLiked(int memberId, int newsfeedId)
+        {
+            try
+            {
+                var result = _context.Likes.Add(new Like
+                {
+                    OwnerId = memberId,
+                    ReferenceId = newsfeedId,
+                    Type  = "Like"
+                 
+                });
+                _context.SaveChanges();
+                return result.Entity;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        public bool Unliked(Like alreadyLiked)
+        {
+            try
+            {
+                var result = _context.Likes.Remove(alreadyLiked);
+                _context.SaveChanges();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
         public bool UpdateBlog(Blog blog)
         {
             try
@@ -104,5 +144,7 @@ namespace BirdClubAPI.DataAccessLayer.Repositories.Newsfeed
                 return false;
             }
         }
+
+       
     }
 }

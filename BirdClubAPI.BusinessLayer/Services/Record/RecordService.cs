@@ -45,6 +45,27 @@ namespace BirdClubAPI.BusinessLayer.Services.Record
                 );
         }
 
+        public MessageViewModel DeleteRecord(int id)
+        {
+            var record = _recordRespository.DeleteRecord(id);
+            if (record != null)
+            {
+                return new MessageViewModel
+                {
+                    StatusCode = System.Net.HttpStatusCode.NoContent,
+                    Message = string.Empty
+                };
+            }
+            else
+            {
+                return new MessageViewModel
+                {
+                    StatusCode = System.Net.HttpStatusCode.OK,
+                    Message = string.Empty
+                };
+            }
+        }
+
         public MessageViewModel EditRecord(int recordId, EditRecordRequestModel requestModel)
         {
             var record = _recordRespository.GetNewfeed(recordId);

@@ -49,7 +49,7 @@ namespace BirdClubAPI.PresentationLayer.Controllers
             }
         }
         [HttpGet("listguest")]
-        public ActionResult <List<GuestViewModel>> GetListGuest()
+        public ActionResult<List<GuestViewModel>> GetListGuest()
         {
             var response = _authService.GetListGuest();
             if (response.Key.StatusCode.Equals(HttpStatusCode.NotFound))
@@ -62,13 +62,26 @@ namespace BirdClubAPI.PresentationLayer.Controllers
         public ActionResult ApproveMember(int id)
         {
             var reponse = _authService.ApproveMember(id);
-            if(reponse.StatusCode == HttpStatusCode.OK)
+            if (reponse.StatusCode == HttpStatusCode.OK)
             {
                 return Ok(reponse);
             }
             else
             {
                 return NotFound(reponse);
+            }
+        }
+        [HttpDelete("{id}/reject")]
+        public ActionResult RejectUser(int id) 
+        {
+            var reponse = _authService.RejectUser(id);
+            if(reponse.StatusCode == HttpStatusCode.OK)
+            {
+                return Ok(reponse);
+            }
+            else
+            {
+                return NoContent();
             }
         }
     }

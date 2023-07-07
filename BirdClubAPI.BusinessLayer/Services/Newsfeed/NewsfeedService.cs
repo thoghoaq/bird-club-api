@@ -106,6 +106,53 @@ namespace BirdClubAPI.BusinessLayer.Services.Newsfeed
             return response;
         }
 
+        public MessageViewModel PostLiked(int memberId, int newsfeedId)
+        {
+            var alreadyLiked = _newsfeedRepository.GetBlog(memberId, newsfeedId);
+            if (alreadyLiked == null)
+            {
+                var like = _newsfeedRepository.PostLiked(memberId, newsfeedId);
+                if (like != null)
+                {
+                    return new MessageViewModel
+                    {
+                        StatusCode = System.Net.HttpStatusCode.OK,
+                        Message = "Like blog success"
+                    };
+                }
+                else
+                {
+                    return new MessageViewModel
+                    {
+                        StatusCode = System.Net.HttpStatusCode.BadRequest,
+                        Message = "Error when like blog"
+                    };
+                }
+            }
+            else
+            {
+                bool unLiked = _newsfeedRepository.Unliked(alreadyLiked);
+                if (unLiked)
+                {
+                    return new MessageViewModel
+                    {
+                        StatusCode = System.Net.HttpStatusCode.OK,
+                        Message = "Unlike blog success"
+                    };
+                }
+                else
+                {
+                    return new MessageViewModel
+                    {
+                        StatusCode = System.Net.HttpStatusCode.BadRequest,
+                        Message = "Error when unlike blog"
+                    };
+                }
+            }
+        }
+
+
+
         public KeyValuePair<MessageViewModel, BlogViewModel?> UpdateBlog(int id, UpdateBlogRm request)
         {
             var blog = _newsfeedRepository.GetBlogs(id);

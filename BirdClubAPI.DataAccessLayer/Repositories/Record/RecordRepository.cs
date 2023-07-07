@@ -35,6 +35,19 @@ namespace BirdClubAPI.DataAccessLayer.Repositories.Record
             }
         }
 
+        public Domain.Entities.Record? DeleteRecord(int id)
+        {
+            var record = _context.Records.Where(e => e.NewsfeedId== id).FirstOrDefault();
+            if (record != null)
+            {
+                _context.Records.Remove(record);
+                _context.SaveChanges();
+                var newfeed = _context.Newsfeeds.Where(e => e.Id== id).FirstOrDefault();
+                _context.Newsfeeds.Remove(newfeed);
+                _context.SaveChanges();
+            }return null;
+        }
+
         public bool EditRecord(Domain.Entities.Record record)
         {
             try

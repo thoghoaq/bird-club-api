@@ -12,5 +12,8 @@ namespace BirdClubAPI.DataAccessLayer.Repositories.Newsfeed
         bool UpdateBlog(Domain.Entities.Blog blog);
         List<NewsfeedResponseModel> GetNewsFeed(int memberid);
         int GetNewsFeedCount();
+        Like? GetBlog(int memberId, int newsfeedId);
+        bool Unliked(Like alreadyLiked);
+        Like? PostLiked(int memberId, int newsfeedId);
     }
 }
