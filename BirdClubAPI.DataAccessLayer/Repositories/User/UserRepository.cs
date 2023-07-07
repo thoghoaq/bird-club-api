@@ -99,5 +99,15 @@ namespace BirdClubAPI.DataAccessLayer.Repositories.User
                 return null;
             }
         }
+
+        public Domain.Entities.User? RejectUser(int userId)
+        {
+            var user = _context.Users.Where(e => e.Id== userId).FirstOrDefault();
+            if (user != null)
+            {
+                _context.Users.Remove(user);
+                _context.SaveChanges();
+            }return null;
+        }
     }
 }
