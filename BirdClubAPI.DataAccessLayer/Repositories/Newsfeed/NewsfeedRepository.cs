@@ -35,7 +35,7 @@ namespace BirdClubAPI.DataAccessLayer.Repositories.Newsfeed
 
         public Domain.Entities.Like? GetLike(int memberId, int newsfeedId)
         {
-            var request = _context.Likes.FirstOrDefault(e => e.Owner.UserId == memberId && e.ReferenceNavigation.NewsfeedId == newsfeedId);
+            var request = _context.Likes.FirstOrDefault(e => e.OwnerId == memberId && e.ReferenceId == newsfeedId && (e.Type == "BLOG" || e.Type == "RECORD"));
             return request;
         }
 
@@ -103,12 +103,12 @@ namespace BirdClubAPI.DataAccessLayer.Repositories.Newsfeed
         {
             try
             {
+                var type = _context.Newsfeeds.Include(e => e.Blog).Include(e => e.Record).SingleOrDefault(e => e.Id == newsfeedId)?.Blog != null ? "BLOG" : "RECORD";
                 var result = _context.Likes.Add(new Domain.Entities.Like
                 {
                     OwnerId = memberId,
                     ReferenceId = newsfeedId,
-                    Type  = "Like"
-                 
+                    Type  = type
                 });
                 _context.SaveChanges();
                 return result.Entity;
