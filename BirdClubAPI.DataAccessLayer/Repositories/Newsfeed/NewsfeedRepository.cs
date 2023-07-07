@@ -75,6 +75,11 @@ namespace BirdClubAPI.DataAccessLayer.Repositories.Newsfeed
             return _mapper.Map<List<NewsfeedResponseModel>>(response);
         }
 
+        public Domain.Entities.Newsfeed? GetNewsFeedById(int newsfeedId)
+        {
+            return _context.Newsfeeds.Include(e => e.Blog).Include(e => e.Record).SingleOrDefault(e => e.Id == newsfeedId);
+        }
+
         public int GetNewsFeedCount()
         {
             return _context.Newsfeeds.Count();

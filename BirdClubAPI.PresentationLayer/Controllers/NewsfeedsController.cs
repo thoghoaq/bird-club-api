@@ -1,6 +1,7 @@
 ﻿using BirdClubAPI.BusinessLayer.Services.Newsfeed;
 using BirdClubAPI.Domain.DTOs.Request.Attendance;
 using BirdClubAPI.Domain.DTOs.Request.Newsfeed.Blog;
+using BirdClubAPI.Domain.DTOs.Request.Newsfeed.Comment;
 using BirdClubAPI.Domain.DTOs.View.Blog;
 using BirdClubAPI.Domain.DTOs.View.Newsfeed;
 using Microsoft.AspNetCore.Mvc;
@@ -95,6 +96,19 @@ namespace BirdClubAPI.PresentationLayer.Controllers
                 return Ok(result);
             }
             return BadRequest(result);
+        }
+
+        [HttpPost("{id}/comment")]
+        public IActionResult PostComment(NewsfeedCommentRequest request)
+        {
+            try
+            {
+                var result = _newsfeedService.PostComment(request);
+                return CreatedAtAction("PostComment", result);
+            } catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }
