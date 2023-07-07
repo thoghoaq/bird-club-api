@@ -113,6 +113,12 @@ namespace BirdClubAPI.BusinessLayer.Services.Newsfeed
                         item.Blog.LikeCount = likes.Count;
                         item.Blog.IsLiked = memberId != null && likes.Any(e => e.OwnerId == memberId);
                     }
+                    if (item.Record != null)
+                    {
+                        var likes = _likeRepository.GetLikes(item.Id);
+                        item.Record.LikeCount = likes.Count;
+                        item.Record.IsLiked = memberId != null && likes.Any(e => e.OwnerId == memberId);
+                    }
                 }
             }
             var response = new NewsfeedViewModel

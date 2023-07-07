@@ -10,5 +10,7 @@ namespace BirdClubAPI.Domain.DTOs.Response.Record
         public int Quantity { get; set; }
         public string? Photo { get; set; }
         public List<CommentRm> Comments { get; set; } = new List<CommentRm>();
+        public int? LikeCount { get; set; }
+        public bool? IsLiked { get; set; }
     }
 }
