@@ -91,6 +91,25 @@ namespace BirdClubAPI.BusinessLayer.Services.Newsfeed
         {
 
             var newsfeed =_newsfeedRepository.GetNewsFeed(memberid);
+            if (newsfeed != null)
+            {
+                foreach (var item in newsfeed)
+                {
+                    if (item.Blog != null)
+                    {
+                        item.Blog.Comments = item.Blog.Comments.OrderByDescending(e => e.PublicationTime).ToList();
+                        var likes = _likeRepository.GetLikes(item.Id);
+                        item.Blog.LikeCount = likes.Count;
+                        item.Blog.IsLiked = likes.Any(e => e.OwnerId == memberid);
+                    }
+                    if (item.Record != null)
+                    {
+                        var likes = _likeRepository.GetLikes(item.Id);
+                        item.Record.LikeCount = likes.Count;
+                        item.Record.IsLiked = likes.Any(e => e.OwnerId == memberid);
+                    }
+                }
+            }
             var response = new NewsfeedViewModel
             {
                 Total = newsfeed.Count,
