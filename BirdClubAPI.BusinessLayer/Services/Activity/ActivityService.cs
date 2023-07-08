@@ -1,11 +1,13 @@
 ﻿using AutoMapper;
 using BirdClubAPI.DataAccessLayer.Repositories.Activity;
 using BirdClubAPI.DataAccessLayer.Repositories.Comment;
+using BirdClubAPI.DataAccessLayer.Repositories.Member;
 using BirdClubAPI.Domain.Commons.Constants;
 using BirdClubAPI.Domain.Commons.Enums;
 using BirdClubAPI.Domain.Commons.Utils;
 using BirdClubAPI.Domain.DTOs.Request.Activity;
 using BirdClubAPI.Domain.DTOs.Response.Activity;
+using BirdClubAPI.Domain.DTOs.Response.Member;
 using BirdClubAPI.Domain.DTOs.View.Acitivity;
 using BirdClubAPI.Domain.DTOs.View.Common;
 using BirdClubAPI.Domain.Entities;
@@ -17,12 +19,14 @@ namespace BirdClubAPI.BusinessLayer.Services.Activity
         private readonly IActivityRepository _activityRepository;
         private readonly IMapper _mapper;
         private readonly ICommentRepository _commentRepository;
+        private readonly IMemberRepository _memberRepository;
 
-        public ActivityService(IActivityRepository activityRepository, IMapper mapper, ICommentRepository commentRepository)
+        public ActivityService(IActivityRepository activityRepository, IMapper mapper, ICommentRepository commentRepository, IMemberRepository memberRepository)
         {
             _activityRepository = activityRepository;
             _mapper = mapper;
             _commentRepository = commentRepository;
+            _memberRepository = memberRepository;
         }
 
         public KeyValuePair<MessageViewModel, AttendanceActivityViewModel?> AttendanceActivity(AttendanceActivityRequestModel requestModel)
@@ -348,6 +352,11 @@ namespace BirdClubAPI.BusinessLayer.Services.Activity
                     },
                     null
                 );
+            }
+
+            foreach (var comment in activity.Comments)
+            {
+                comment.Owner = _mapper.Map<MemberResponseModel>(_memberRepository.GetMember(comment.OwnerId));
             }
             var response = _mapper.Map<AcitivityViewModel>(activity);
             return new KeyValuePair<MessageViewModel, AcitivityViewModel?>(
