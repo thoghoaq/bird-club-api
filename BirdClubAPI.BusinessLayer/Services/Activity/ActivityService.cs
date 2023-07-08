@@ -145,6 +145,10 @@ namespace BirdClubAPI.BusinessLayer.Services.Activity
         public List<AcitivityViewModel> GetActivitiesByOwner(int ownerId)
         {
             List<ActivityResponseModel> activities = _activityRepository.GetActivitiesByOwner(ownerId);
+            foreach (var act in activities)
+            {
+                act.RequestCount = _activityRepository.GetAttendanceRequests(act.Id).Count;
+            }
             return _mapper.Map<List<AcitivityViewModel>>(activities);
         }
 

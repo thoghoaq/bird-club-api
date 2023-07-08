@@ -15,5 +15,6 @@ namespace BirdClubAPI.Domain.DTOs.View.Acitivity
         public int Id { get; set; }
         public bool Status { get; set; }
         public string? Background { get; set; }
+        public int? RequestCount { get; set; }
     }
 }
