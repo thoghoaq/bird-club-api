@@ -2,6 +2,7 @@
 using BirdClubAPI.Domain.Commons.Enums;
 using BirdClubAPI.Domain.DTOs.Request.Activity;
 using BirdClubAPI.Domain.DTOs.Request.Attendance;
+using BirdClubAPI.Domain.DTOs.Request.Newsfeed.Comment;
 using BirdClubAPI.Domain.DTOs.Response.Activity;
 using BirdClubAPI.Domain.DTOs.View.Acitivity;
 using BirdClubAPI.Domain.DTOs.View.Common;
@@ -221,6 +222,19 @@ namespace BirdClubAPI.PresentationLayer.Controllers
                 return NotFound(response.Key);
             }
             return Ok(response.Value);
+        }
+
+        [HttpPost("{id}/comment")]
+        public IActionResult PostComment(int id, ActivityCommentRequest request)
+        {
+            try
+            {
+                var response = _activityService.PostComment(id, request);
+                return Ok(response);
+            } catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using BirdClubAPI.DataAccessLayer.Repositories.Activity;
+using BirdClubAPI.DataAccessLayer.Repositories.Comment;
 using BirdClubAPI.Domain.Commons.Constants;
 using BirdClubAPI.Domain.Commons.Enums;
 using BirdClubAPI.Domain.Commons.Utils;
@@ -7,6 +8,7 @@ using BirdClubAPI.Domain.DTOs.Request.Activity;
 using BirdClubAPI.Domain.DTOs.Response.Activity;
 using BirdClubAPI.Domain.DTOs.View.Acitivity;
 using BirdClubAPI.Domain.DTOs.View.Common;
+using BirdClubAPI.Domain.Entities;
 
 namespace BirdClubAPI.BusinessLayer.Services.Activity
 {
@@ -14,11 +16,13 @@ namespace BirdClubAPI.BusinessLayer.Services.Activity
     {
         private readonly IActivityRepository _activityRepository;
         private readonly IMapper _mapper;
+        private readonly ICommentRepository _commentRepository;
 
-        public ActivityService(IActivityRepository activityRepository, IMapper mapper)
+        public ActivityService(IActivityRepository activityRepository, IMapper mapper, ICommentRepository commentRepository)
         {
             _activityRepository = activityRepository;
             _mapper = mapper;
+            _commentRepository = commentRepository;
         }
 
         public KeyValuePair<MessageViewModel, AttendanceActivityViewModel?> AttendanceActivity(AttendanceActivityRequestModel requestModel)
@@ -409,6 +413,19 @@ namespace BirdClubAPI.BusinessLayer.Services.Activity
                 }
             }
             return calenderActivities.OrderBy(e => e.Date).ToList();
+        }
+
+        public bool PostComment(int id, ActivityCommentRequest request)
+        {
+            var comment = new Comment
+            {
+                OwnerId = request.OwnerId,
+                Content = request.Content,
+                Type = "ACTIVITY",
+                ReferenceId = id,
+                PublicationTime = DateTime.UtcNow.AddHours(7),
+            };
+            return _commentRepository.Create(comment) != null;
         }
     }
 }
