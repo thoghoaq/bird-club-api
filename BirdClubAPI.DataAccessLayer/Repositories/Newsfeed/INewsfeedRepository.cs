@@ -1,5 +1,6 @@
 ﻿using BirdClubAPI.Domain.DTOs.Response.Blog;
 using BirdClubAPI.Domain.DTOs.Response.Newsfeed;
+using BirdClubAPI.Domain.DTOs.View.Blog;
 using BirdClubAPI.Domain.Entities;
 
 namespace BirdClubAPI.DataAccessLayer.Repositories.Newsfeed
@@ -16,5 +17,6 @@ namespace BirdClubAPI.DataAccessLayer.Repositories.Newsfeed
         bool Unliked(Domain.Entities.Like alreadyLiked);
         Domain.Entities.Like? PostLiked(int memberId, int newsfeedId);
         Domain.Entities.Newsfeed? GetNewsFeedById(int newsfeedId);
+        List<BlogViewModel> GetBlogs();
     }
 }

@@ -87,6 +87,11 @@ namespace BirdClubAPI.BusinessLayer.Services.Newsfeed
 
         }
 
+        public List<BlogViewModel> GetBlogs()
+        {
+            return _newsfeedRepository.GetBlogs();
+        }
+
         public NewsfeedViewModel GetNewsFeed(int memberid)
         {
 

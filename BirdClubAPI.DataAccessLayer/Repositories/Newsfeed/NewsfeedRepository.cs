@@ -3,6 +3,7 @@ using BirdClubAPI.DataAccessLayer.Context;
 using BirdClubAPI.Domain.DTOs.Response.Blog;
 using BirdClubAPI.Domain.DTOs.Response.Member;
 using BirdClubAPI.Domain.DTOs.Response.Newsfeed;
+using BirdClubAPI.Domain.DTOs.View.Blog;
 using BirdClubAPI.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -108,7 +109,7 @@ namespace BirdClubAPI.DataAccessLayer.Repositories.Newsfeed
                 {
                     OwnerId = memberId,
                     ReferenceId = newsfeedId,
-                    Type  = type
+                    Type = type
                 });
                 _context.SaveChanges();
                 return result.Entity;
@@ -148,6 +149,18 @@ namespace BirdClubAPI.DataAccessLayer.Repositories.Newsfeed
             }
         }
 
-       
+        public List<BlogViewModel> GetBlogs()
+        {
+            return _context.Newsfeeds
+                .Include(e => e.Owner.User)
+                .Select(e => new BlogViewModel
+                {
+                    Id = e.Id,
+                    Content = e.Blog.Content,
+                    Owner = _mapper.Map<MemberResponseModel>(e.Owner),
+                    PublicationTime = e.PublicationTime,
+                    Title = e.Blog.Title
+                }).ToList();
+        }
     }
 }
