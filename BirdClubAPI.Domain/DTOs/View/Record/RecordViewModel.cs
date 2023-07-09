@@ -2,7 +2,7 @@
 {
     public class RecordViewModel
     {
-        public int BirdId { get; set; }
+        public int NewsfeedId { get; set; }
         public string BirdName { get; set; } = null!;
         public string Species { get; set; } = null!;
         public int Quantity { get; set; }

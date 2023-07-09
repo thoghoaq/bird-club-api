@@ -75,7 +75,7 @@ namespace BirdClubAPI.DataAccessLayer.Repositories.Record
                 .Include(e => e.Bird)
                 .Select(b => new RecordResponseModel
             {
-                BirdId = b.BirdId,
+                NewsfeedId = b.NewsfeedId,
                 BirdName = b.Bird.Name,
                 Species = b.Bird.Species ?? string.Empty,
                 Photo = b.Photo,
@@ -91,7 +91,7 @@ namespace BirdClubAPI.DataAccessLayer.Repositories.Record
                 .Where(e => e.Newsfeed.OwnerId == memberId)
                 .Select(b => new RecordResponseModel
                 {
-                    BirdId = b.BirdId,
+                    NewsfeedId = b.NewsfeedId,
                     BirdName = b.Bird.Name,
                     Species = b.Bird.Species ?? string.Empty,
                     Quantity = b.Quantity,
@@ -101,7 +101,7 @@ namespace BirdClubAPI.DataAccessLayer.Repositories.Record
 
         public Domain.Entities.Record? GetRecords(int id)
         {
-            return _context.Records.Where(e => e.BirdId ==  id).FirstOrDefault();
+            return _context.Records.Where(e => e.NewsfeedId ==  id).FirstOrDefault();
         }
     }
 }
