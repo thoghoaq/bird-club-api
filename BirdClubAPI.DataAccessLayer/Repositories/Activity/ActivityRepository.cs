@@ -81,7 +81,7 @@ namespace BirdClubAPI.DataAccessLayer.Repositories.Activity
             var activity = _context.Activities
                 .Include(e => e.Owner)
                     .ThenInclude(e => e.User)
-                .Include(e => e.Comments)
+                .Include(e => e.Comments.Where(e => e.Type == "ACTIVITY"))
                 .SingleOrDefault(e => e.Id == id);
             if (activity == null || activity.Status == false)
             {

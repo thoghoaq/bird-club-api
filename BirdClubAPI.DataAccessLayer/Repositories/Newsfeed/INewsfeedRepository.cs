@@ -18,5 +18,6 @@ namespace BirdClubAPI.DataAccessLayer.Repositories.Newsfeed
         Domain.Entities.Like? PostLiked(int memberId, int newsfeedId);
         Domain.Entities.Newsfeed? GetNewsFeedById(int newsfeedId);
         List<BlogViewModel> GetBlogs();
+        bool DeleteBlog(int id);
     }
 }

@@ -60,6 +60,11 @@ namespace BirdClubAPI.BusinessLayer.Services.Newsfeed
                 );
         }
 
+        public bool DeleteBlog(int id)
+        {
+            return _newsfeedRepository.DeleteBlog(id);
+        }
+
         public KeyValuePair<MessageViewModel, BlogViewModel?> GetBlog(int id)
         {
             var blog = _newsfeedRepository.GetBlogs(id);

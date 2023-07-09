@@ -153,6 +153,7 @@ namespace BirdClubAPI.DataAccessLayer.Repositories.Newsfeed
         {
             return _context.Newsfeeds
                 .Include(e => e.Owner.User)
+                .Where(e => e.Blog != null)
                 .Select(e => new BlogViewModel
                 {
                     Id = e.Id,
@@ -161,6 +162,17 @@ namespace BirdClubAPI.DataAccessLayer.Repositories.Newsfeed
                     PublicationTime = e.PublicationTime,
                     Title = e.Blog.Title
                 }).ToList();
+        }
+
+        public bool DeleteBlog(int id)
+        {
+            var newsfeed = _context.Newsfeeds.FirstOrDefault(e => e.Id == id);
+            var blog = _context.Blogs.FirstOrDefault(e => e.NewsfeedId == id);
+            if (newsfeed == null || blog == null) return false;
+            _context.Blogs.Remove(blog);
+            _context.Newsfeeds.Remove(newsfeed);
+            _context.SaveChanges();
+            return true;
         }
     }
 }
