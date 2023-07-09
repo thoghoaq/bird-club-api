@@ -71,5 +71,12 @@ namespace BirdClubAPI.PresentationLayer.Controllers
                 return NotFound(reponse);
             }
         }
+
+        [HttpGet]
+        public ActionResult ShowUser()
+        {
+            var response = _authService.ShowUser();           
+            return Ok(response);
+        }
     }
 }

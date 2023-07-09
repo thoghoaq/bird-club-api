@@ -109,5 +109,18 @@ namespace BirdClubAPI.BusinessLayer.Services.Auth
             if (model == null) return false;
             return true;
         }
+
+        public UserViewModel ShowUser()
+        {
+            var user = _userRepository.ShowUser();
+            var guest = _userRepository.GetListGuest();
+            var response = new UserViewModel
+            {
+                Total = user.Count,
+                Guest = guest.Count,
+                Member = user.Count - guest.Count
+            };
+            return response;
+        }
     }
 }

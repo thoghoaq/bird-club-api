@@ -1,7 +1,9 @@
 ﻿using BirdClubAPI.DataAccessLayer.Context;
 using BirdClubAPI.Domain.Commons.Constants;
 using BirdClubAPI.Domain.DTOs.Request.Auth;
+using BirdClubAPI.Domain.DTOs.Response.User;
 using BirdClubAPI.Domain.DTOs.View.Auth;
+using BirdClubAPI.Domain.DTOs.View.Member;
 using Microsoft.EntityFrameworkCore;
 
 namespace BirdClubAPI.DataAccessLayer.Repositories.User
@@ -98,6 +100,17 @@ namespace BirdClubAPI.DataAccessLayer.Repositories.User
             {
                 return null;
             }
+        }
+
+        public List<UserResponseModel> ShowUser()
+        {
+            return _context.Users.Select(e => new UserResponseModel
+            {
+                Id = e.Id,
+                Email = e.Email,
+                DisplayName = e.DisplayName,
+                UserType = e.UserType
+            }).ToList();
         }
     }
 }
