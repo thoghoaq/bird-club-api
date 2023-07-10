@@ -1,5 +1,7 @@
 ﻿using BirdClubAPI.Domain.DTOs.Request.Auth;
+using BirdClubAPI.Domain.DTOs.Response.User;
 using BirdClubAPI.Domain.DTOs.View.Auth;
+using BirdClubAPI.Domain.DTOs.View.Member;
 
 namespace BirdClubAPI.DataAccessLayer.Repositories.User
 {
@@ -7,8 +9,9 @@ namespace BirdClubAPI.DataAccessLayer.Repositories.User
     {
         Domain.Entities.User? Get(string email, string password);
         Domain.Entities.User? Create(RegisterRequestModel requestModel);
-        List<GuestViewModel>? GetListGuest();
         Domain.Entities.User? ApproveMember(int userId);
         Domain.Entities.User? RejectUser(int userId);
+        List<GuestViewModel>? GetListGuest();
+        List<UserResponseModel> ShowUser();
     }
 }

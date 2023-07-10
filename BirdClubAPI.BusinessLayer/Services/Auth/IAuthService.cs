@@ -12,5 +12,6 @@ namespace BirdClubAPI.BusinessLayer.Services.Auth
         KeyValuePair<MessageViewModel, AuthViewModel?> Login (LoginFormRequestModel loginFormRequest);
         bool Register(RegisterRequestModel requestModel);
         MessageViewModel RejectUser(int id);
+        UserViewModel ShowUser();
     }
 }

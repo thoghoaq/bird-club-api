@@ -71,11 +71,12 @@ namespace BirdClubAPI.PresentationLayer.Controllers
                 return NotFound(reponse);
             }
         }
+
         [HttpDelete("{id}/reject")]
-        public ActionResult RejectUser(int id) 
+        public ActionResult RejectUser(int id)
         {
             var reponse = _authService.RejectUser(id);
-            if(reponse.StatusCode == HttpStatusCode.OK)
+            if (reponse.StatusCode == HttpStatusCode.OK)
             {
                 return Ok(reponse);
             }
@@ -83,6 +84,14 @@ namespace BirdClubAPI.PresentationLayer.Controllers
             {
                 return NoContent();
             }
+        }
+
+
+        [HttpGet]
+        public ActionResult ShowUser()
+        {
+            var response = _authService.ShowUser();           
+            return Ok(response);
         }
     }
 }
