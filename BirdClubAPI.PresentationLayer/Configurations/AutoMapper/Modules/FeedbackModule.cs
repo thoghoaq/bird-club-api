@@ -11,6 +11,7 @@ namespace BirdClubAPI.PresentationLayer.Configurations.AutoMapper.Modules
         {
             mc.CreateMap<FeedbackResponseModel, FeedbackViewModel>().ReverseMap();
             mc.CreateMap<Feedback, FeedbackResponseModel>().ReverseMap();
+            mc.CreateMap<Feedback, CreateFeedbackViewModel>().ReverseMap();
         }
     }
 }
