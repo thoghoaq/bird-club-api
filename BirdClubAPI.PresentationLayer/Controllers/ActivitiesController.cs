@@ -41,9 +41,9 @@ namespace BirdClubAPI.PresentationLayer.Controllers
         /// API lấy tất cả activities có status true
         /// </summary>
         [HttpGet]
-        public ActionResult<List<AcitivityViewModel>> GetActivities()
+        public ActionResult<List<AcitivityViewModel>> GetActivities(bool? isAll)
         {
-            List<AcitivityViewModel> acitivities = _activityService.GetActivities();
+            List<AcitivityViewModel> acitivities = _activityService.GetActivities(isAll);
             return Ok(acitivities);
         }
 

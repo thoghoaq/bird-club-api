@@ -107,9 +107,9 @@ namespace BirdClubAPI.BusinessLayer.Services.Activity
             };
         }
 
-        public List<AcitivityViewModel> GetActivities()
+        public List<AcitivityViewModel> GetActivities(bool? isAll)
         {
-            List<ActivityResponseModel> activities = _activityRepository.GetActivities();
+            List<ActivityResponseModel> activities = _activityRepository.GetActivities(isAll);
             foreach ( var activityResponse in activities )
             {
                 activityResponse.FeedbackCount = _feedbackRepository.GetFeedbacks(activityResponse.Id).Count;

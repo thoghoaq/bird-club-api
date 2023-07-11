@@ -62,9 +62,12 @@ namespace BirdClubAPI.DataAccessLayer.Repositories.Activity
             }
         }
 
-        public List<ActivityResponseModel> GetActivities()
+        public List<ActivityResponseModel> GetActivities(bool? isAll = false)
         {
-            var activities = _context.Activities
+            var activities = isAll != true ? _context.Activities
+                .Include(e => e.Owner)
+                    .ThenInclude(e => e.User)
+                .ToList() : _context.Activities
                 .Where(e => e.Status == true)
                 .Include(e => e.Owner)
                     .ThenInclude(e => e.User)
