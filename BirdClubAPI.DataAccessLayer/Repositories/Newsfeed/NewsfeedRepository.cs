@@ -69,7 +69,7 @@ namespace BirdClubAPI.DataAccessLayer.Repositories.Newsfeed
                 .Include(e => e.Blog)
                 .Include(e => e.Record)
                     .ThenInclude(e => e.Bird)
-                   .OrderBy(e => e.Id))
+                   .OrderByDescending(e => e.PublicationTime))
                 .ToList();
             return response;
         }
