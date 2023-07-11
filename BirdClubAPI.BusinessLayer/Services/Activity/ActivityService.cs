@@ -248,10 +248,12 @@ namespace BirdClubAPI.BusinessLayer.Services.Activity
         public AttendanceStatusRm GetUserAttendanceStatus(int id, int memberId)
         {
             var activity = _activityRepository.GetActivitieWithAttendance(id);
+            var isFeedback = _feedbackRepository.GetFeedbacks(id).AsQueryable().Any(e => e.OwnerId == memberId);
             if (activity == null) return new AttendanceStatusRm
             {
                 Status = AttendanceStatusEnum.NOT_FOUND,
                 Message = AttendanceStatusConstants.NOT_FOUND,
+                IsFeedback = isFeedback
             };
             if (activity.EndTime.CompareTo(DateTime.UtcNow.AddHours(7)) < 0)
             {
@@ -259,6 +261,7 @@ namespace BirdClubAPI.BusinessLayer.Services.Activity
                 {
                     Status = AttendanceStatusEnum.CLOSED,
                     Message = AttendanceStatusConstants.CLOSED,
+                    IsFeedback = isFeedback
                 };
             }
             if (activity.AttendanceRequests.Any(e => e.MemberId == memberId))
@@ -267,6 +270,7 @@ namespace BirdClubAPI.BusinessLayer.Services.Activity
                 {
                     Status = AttendanceStatusEnum.PENDING,
                     Message = AttendanceStatusConstants.PENDING,
+                    IsFeedback = isFeedback
                 };
             }
             else if (activity.Attendances.Any(e => e.MemberId == memberId))
@@ -275,6 +279,7 @@ namespace BirdClubAPI.BusinessLayer.Services.Activity
                 {
                     Status = AttendanceStatusEnum.ACCEPTED,
                     Message = AttendanceStatusConstants.ACCEPTED,
+                    IsFeedback = isFeedback
                 };
             }
             else
@@ -283,6 +288,7 @@ namespace BirdClubAPI.BusinessLayer.Services.Activity
                 {
                     Status = AttendanceStatusEnum.NOT_ATTEND,
                     Message = AttendanceStatusConstants.NOT_ATTEND,
+                    IsFeedback = isFeedback
                 };
             }
         }
