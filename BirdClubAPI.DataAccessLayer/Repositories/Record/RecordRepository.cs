@@ -77,6 +77,7 @@ namespace BirdClubAPI.DataAccessLayer.Repositories.Record
             {
                 NewsfeedId = b.NewsfeedId,
                 BirdName = b.Bird.Name,
+                BirdId = b.Bird.Id,
                 Species = b.Bird.Species ?? string.Empty,
                 Photo = b.Photo,
                 Quantity = b.Quantity
