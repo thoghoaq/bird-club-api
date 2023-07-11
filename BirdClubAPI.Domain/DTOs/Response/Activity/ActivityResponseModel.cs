@@ -18,5 +18,6 @@ namespace BirdClubAPI.Domain.DTOs.Response.Activity
         public string? Background { get; set; }
         public int? RequestCount { get; set; }
         public List<CommentRm> Comments { get; set; } = new List<CommentRm>();
+        public int? FeedbackCount { get; set; }
     }
 }

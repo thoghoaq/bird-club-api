@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using BirdClubAPI.DataAccessLayer.Repositories.Activity;
 using BirdClubAPI.DataAccessLayer.Repositories.Comment;
+using BirdClubAPI.DataAccessLayer.Repositories.Feedback;
 using BirdClubAPI.DataAccessLayer.Repositories.Member;
 using BirdClubAPI.Domain.Commons.Constants;
 using BirdClubAPI.Domain.Commons.Enums;
@@ -20,13 +21,15 @@ namespace BirdClubAPI.BusinessLayer.Services.Activity
         private readonly IMapper _mapper;
         private readonly ICommentRepository _commentRepository;
         private readonly IMemberRepository _memberRepository;
+        private readonly IFeedbackRepository _feedbackRepository;
 
-        public ActivityService(IActivityRepository activityRepository, IMapper mapper, ICommentRepository commentRepository, IMemberRepository memberRepository)
+        public ActivityService(IActivityRepository activityRepository, IMapper mapper, ICommentRepository commentRepository, IMemberRepository memberRepository, IFeedbackRepository feedbackRepository)
         {
             _activityRepository = activityRepository;
             _mapper = mapper;
             _commentRepository = commentRepository;
             _memberRepository = memberRepository;
+            _feedbackRepository = feedbackRepository;
         }
 
         public KeyValuePair<MessageViewModel, AttendanceActivityViewModel?> AttendanceActivity(AttendanceActivityRequestModel requestModel)
@@ -107,6 +110,10 @@ namespace BirdClubAPI.BusinessLayer.Services.Activity
         public List<AcitivityViewModel> GetActivities()
         {
             List<ActivityResponseModel> activities = _activityRepository.GetActivities();
+            foreach ( var activityResponse in activities )
+            {
+                activityResponse.FeedbackCount = _feedbackRepository.GetFeedbacks(activityResponse.Id).Count;
+            }
             return _mapper.Map<List<AcitivityViewModel>>(activities);
         }
 
