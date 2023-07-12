@@ -10,11 +10,11 @@ namespace BirdClubAPI.BusinessLayer.Helpers
             // Setup
             var _emailSettings = new EmailSettings
             {
-                ApiKey = "c66d62178ed4a12eb58db7018c17d289-262b213e-d7a2d2cd",
+                ApiKey = "38a60536f7da5078f214dac1a47ce08b-262b213e-fe5ef3b7",
                 DisplayName = "BirdClub Support",
                 From = "support@birdclub.com",
                 ReplyTo = "noreply@birdclub.com",
-                EmailDomain = "sandboxe88483b963bd49cbaa4f051c09a4144e.mailgun.org",
+                EmailDomain = "sandbox6d786bd2bad641d48e67d7b67a9c8ad5.mailgun.org",
             };
 
             string templateFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Helpers/template.html");
