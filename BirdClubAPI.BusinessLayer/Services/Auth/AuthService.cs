@@ -102,11 +102,6 @@ namespace BirdClubAPI.BusinessLayer.Services.Auth
                 );
             }
             if (!record.EmailVerified) {
-                var verificationLink = await auth.GenerateEmailVerificationLinkAsync(user.Email);
-                string subject = "BirdClub Registration Verification";
-                string txtMessage = "BirdClub Registration Verification";
-                await MailHelper.SendEmail(user.Email, subject, txtMessage, verificationLink);
-
                 return new KeyValuePair<MessageViewModel, AuthViewModel?>(
                 new MessageViewModel { StatusCode = HttpStatusCode.Unauthorized, Message = "This user does not verify email" },
                 null
