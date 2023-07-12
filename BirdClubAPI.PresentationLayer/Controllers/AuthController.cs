@@ -21,14 +21,23 @@ namespace BirdClubAPI.PresentationLayer.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(LoginFormRequestModel loginForm)
         {
-            var result = await _authService.Login(loginForm);
-            if (result.Key.StatusCode == HttpStatusCode.OK)
+            try
             {
-                return Ok(result.Value);
-            }
-            else
+                var result = await _authService.Login(loginForm);
+                if (result.Key.StatusCode == HttpStatusCode.OK)
+                {
+                    return Ok(result.Value);
+                }
+                else
+                {
+                    return Unauthorized(result.Key);
+                }
+            } catch (Exception ex)
             {
-                return Unauthorized(result.Key);
+                return StatusCode((int)HttpStatusCode.InternalServerError, new
+                {
+                    ex.Message
+                });
             }
         }
 
