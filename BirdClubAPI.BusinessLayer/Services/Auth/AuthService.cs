@@ -174,6 +174,11 @@ namespace BirdClubAPI.BusinessLayer.Services.Auth
         public async Task<bool> ResendEmail(string email)
         {
             var auth = FirebaseAuth.DefaultInstance;
+            var user = await auth.GetUserByEmailAsync(email);
+            if (user.EmailVerified)
+            {
+                return false;
+            }
             var verificationLink = await auth.GenerateEmailVerificationLinkAsync(email);
 
             string subject = "BirdClub Registration Verification";

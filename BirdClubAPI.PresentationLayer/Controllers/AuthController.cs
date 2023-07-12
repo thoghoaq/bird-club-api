@@ -106,7 +106,11 @@ namespace BirdClubAPI.PresentationLayer.Controllers
         [HttpPost("resend-email")]
         public async Task<IActionResult> ResendEmail(string email)
         {
-            await _authService.ResendEmail(email);
+            var result = await _authService.ResendEmail(email);
+            if (!result)
+            {
+                return BadRequest(new { message = "Email has verified" });
+            }
             return NoContent();
         }
     }
