@@ -26,7 +26,7 @@ namespace BirdClubAPI.BusinessLayer.Services.Auth
             _configuration = configuration;
         }
 
-        public MessageViewModel ApproveMember(int id)
+        public async Task<MessageViewModel> ApproveMember(int id)
         {
             var approve = _userRepository.ApproveMember(id);
             if (approve == null)
@@ -39,6 +39,12 @@ namespace BirdClubAPI.BusinessLayer.Services.Auth
             }
             else
             {
+                var notification = new Notification
+                {
+                    Title = "Authentication",
+                    Message = "Register request has approved"
+                };
+                await FirebaseHelper.Write(id, notification);
                 return new MessageViewModel
                 {
                     StatusCode = System.Net.HttpStatusCode.OK,
@@ -142,6 +148,16 @@ namespace BirdClubAPI.BusinessLayer.Services.Auth
             string txtMessage = "BirdClub Registration Verification";
             await MailHelper.SendEmail(newUser.Email, subject, txtMessage, verificationLink);
 
+            var listManager = _userRepository.GetManagerAndAdmin();
+            foreach (var manager in listManager)
+            {
+                var notification = new Notification
+                {
+                    Title = "Request",
+                    Message = $"There are new member request: {model.Email}"
+                };
+                await FirebaseHelper.Write(manager.Id, notification);
+            }
             return true;
         }
 
@@ -154,6 +170,13 @@ namespace BirdClubAPI.BusinessLayer.Services.Auth
                 var auth = FirebaseAuth.DefaultInstance;
                 var userRecord = await auth.GetUserByEmailAsync(email);
                 await auth.DeleteUserAsync(userRecord.Uid);
+
+                var notification = new Notification
+                {
+                    Title = "Request",
+                    Message = "Manager reject your request"
+                };
+                await FirebaseHelper.Write(id, notification);
 
                 return new MessageViewModel
                 {

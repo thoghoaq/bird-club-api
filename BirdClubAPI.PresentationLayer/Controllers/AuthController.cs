@@ -1,4 +1,5 @@
-﻿using BirdClubAPI.BusinessLayer.Services.Auth;
+﻿using BirdClubAPI.BusinessLayer.Helpers;
+using BirdClubAPI.BusinessLayer.Services.Auth;
 using BirdClubAPI.Domain.DTOs.Request.Auth;
 using BirdClubAPI.Domain.DTOs.View.Auth;
 using BirdClubAPI.Domain.DTOs.View.Common;
@@ -68,9 +69,9 @@ namespace BirdClubAPI.PresentationLayer.Controllers
             return Ok(response.Value);
         }
         [HttpPost("{id}/approve")]
-        public ActionResult ApproveMember(int id)
+        public async Task<ActionResult> ApproveMember(int id)
         {
-            var reponse = _authService.ApproveMember(id);
+            var reponse = await _authService.ApproveMember(id);
             if (reponse.StatusCode == HttpStatusCode.OK)
             {
                 return Ok(reponse);

@@ -13,5 +13,6 @@ namespace BirdClubAPI.DataAccessLayer.Repositories.User
         string? RejectUser(int userId);
         List<GuestViewModel>? GetListGuest();
         List<UserResponseModel> ShowUser();
+        List<Domain.Entities.User> GetManagerAndAdmin();
     }
 }

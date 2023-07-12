@@ -23,7 +23,7 @@ namespace BirdClubAPI.DataAccessLayer.Repositories.User
             if (user == null) return null;
             if (user.UserType == UserTypeConstants.GUEST)
             {
-     
+
                 user.UserType = UserTypeConstants.MEMBER;
                 _context.SaveChanges();
 
@@ -35,7 +35,7 @@ namespace BirdClubAPI.DataAccessLayer.Repositories.User
                 };
                 _context.Members.Add(member);
                 _context.SaveChanges();
-                
+
 
                 return user;
             }
@@ -71,7 +71,7 @@ namespace BirdClubAPI.DataAccessLayer.Repositories.User
                 {
                     Id = e.Id,
                     Email = e.Email,
-                    DisplayName= e.DisplayName,
+                    DisplayName = e.DisplayName,
                     Password = e.Password,
                     UserType = e.UserType,
                     Member = e.Member
@@ -102,6 +102,10 @@ namespace BirdClubAPI.DataAccessLayer.Repositories.User
             }
         }
 
+        public List<Domain.Entities.User> GetManagerAndAdmin()
+        {
+            return _context.Users.Where(e => e.UserType == UserTypeConstants.ADMIN || e.UserType == UserTypeConstants.MANAGER).ToList();
+        }
 
         public string? RejectUser(int userId)
         {

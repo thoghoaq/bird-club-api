@@ -158,9 +158,9 @@ namespace BirdClubAPI.PresentationLayer.Controllers
         /// API gửi request attend 1 activity
         /// </summary>
         [HttpPost("attendance-requests")]
-        public IActionResult RequestAttendance(AttendanceRequestModel request)
+        public async Task<IActionResult> RequestAttendance(AttendanceRequestModel request)
         {
-            var result = _activityService.RequestAttendance(request.MemberId, request.ActivityId);
+            var result = await _activityService.RequestAttendance(request.MemberId, request.ActivityId);
             if (result.StatusCode.Equals(HttpStatusCode.BadRequest))
             {
                 return BadRequest(result);
@@ -172,9 +172,9 @@ namespace BirdClubAPI.PresentationLayer.Controllers
         /// API accept request
         /// </summary>
         [HttpPost("attendances")]
-        public IActionResult PostAttendance(AttendanceRequestModel request)
+        public async Task<IActionResult> PostAttendance(AttendanceRequestModel request)
         {
-            var result = _activityService.PostAttendance(request.MemberId, request.ActivityId);
+            var result = await _activityService.PostAttendance(request.MemberId, request.ActivityId);
             if (result.StatusCode.Equals(HttpStatusCode.OK))
             {
                 return Ok(result);
@@ -186,9 +186,9 @@ namespace BirdClubAPI.PresentationLayer.Controllers
         /// API decline an attendance request
         /// </summary>
         [HttpDelete("attendance-requests")]
-        public IActionResult DeclineAttendance(AttendanceRequestModel request)
+        public async Task<IActionResult> DeclineAttendance(AttendanceRequestModel request)
         {
-            var result = _activityService.DeclineAttendance(request.MemberId, request.ActivityId);
+            var result = await _activityService.DeclineAttendance(request.MemberId, request.ActivityId);
             if (result.StatusCode.Equals(HttpStatusCode.OK))
             {
                 return Ok(result);
@@ -225,11 +225,11 @@ namespace BirdClubAPI.PresentationLayer.Controllers
         }
 
         [HttpPost("{id}/comment")]
-        public IActionResult PostComment(int id, ActivityCommentRequest request)
+        public async Task<IActionResult> PostComment(int id, ActivityCommentRequest request)
         {
             try
             {
-                var response = _activityService.PostComment(id, request);
+                var response = await _activityService.PostComment(id, request);
                 return Ok(response);
             } catch (Exception ex)
             {

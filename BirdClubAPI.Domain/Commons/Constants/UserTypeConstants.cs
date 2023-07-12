@@ -5,5 +5,7 @@
         public const string GUEST = "GUEST";
         public const string MEMBER = "MEMBER";
         public const string ADMIN = "ADMIN";
+        public const string MANAGER = "MANAGER";
+        public const string STAFF = "STAFF";
     }
 }

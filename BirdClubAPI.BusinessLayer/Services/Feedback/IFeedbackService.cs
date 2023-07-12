@@ -7,7 +7,7 @@ namespace BirdClubAPI.BusinessLayer.Services.Feedback
 {
     public interface IFeedbackService
     {
-        KeyValuePair<MessageViewModel, FeedbackResponseModel?> CreateFeedback(CreateFeedbackRequestModel requestModel);
+        Task<KeyValuePair<MessageViewModel, FeedbackResponseModel?>> CreateFeedback(CreateFeedbackRequestModel requestModel);
         List<FeedbackViewModel> GetFeedbacks(int activityId);
 
     }

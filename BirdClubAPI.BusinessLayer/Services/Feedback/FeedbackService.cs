@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using BirdClubAPI.BusinessLayer.Helpers;
+using BirdClubAPI.DataAccessLayer.Repositories.Activity;
 using BirdClubAPI.DataAccessLayer.Repositories.Feedback;
 using BirdClubAPI.Domain.DTOs.Request.Feedback;
 using BirdClubAPI.Domain.DTOs.Response.Feedback;
@@ -11,15 +13,17 @@ namespace BirdClubAPI.BusinessLayer.Services.Feedback
     {
         private readonly IFeedbackRepository _feedbackRepository;
         private readonly IMapper _mapper;
+        private readonly IActivityRepository _activityRepository;
 
 
-        public FeedbackService (IFeedbackRepository feedbackRepository, IMapper mapper)
+        public FeedbackService (IFeedbackRepository feedbackRepository, IMapper mapper, IActivityRepository activityRepository)
         {
             _feedbackRepository = feedbackRepository;
             _mapper = mapper;
+            _activityRepository = activityRepository;
         }
 
-        public KeyValuePair<MessageViewModel, FeedbackResponseModel?> CreateFeedback(CreateFeedbackRequestModel requestModel)
+        public async Task<KeyValuePair<MessageViewModel, FeedbackResponseModel?>> CreateFeedback(CreateFeedbackRequestModel requestModel)
         {
             var feedback = new Domain.Entities.Feedback
             {
@@ -40,6 +44,14 @@ namespace BirdClubAPI.BusinessLayer.Services.Feedback
                     }, null
                     );
             }
+
+            var owner = _activityRepository.GetActivity(requestModel.ActivityId)!;
+            var notification = new Notification
+            {
+                Title = "Activity",
+                Message = $"There are new member (id: {requestModel.OwnerId}) feedback your activity: {requestModel.ActivityId}"
+            };
+            await FirebaseHelper.Write(owner.OwnerId, notification);
 
             return new KeyValuePair<MessageViewModel, FeedbackResponseModel?>(
                 new MessageViewModel

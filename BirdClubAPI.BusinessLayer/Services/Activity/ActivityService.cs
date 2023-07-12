@@ -1,8 +1,11 @@
 ﻿using AutoMapper;
+using AutoMapper.Execution;
+using BirdClubAPI.BusinessLayer.Helpers;
 using BirdClubAPI.DataAccessLayer.Repositories.Activity;
 using BirdClubAPI.DataAccessLayer.Repositories.Comment;
 using BirdClubAPI.DataAccessLayer.Repositories.Feedback;
 using BirdClubAPI.DataAccessLayer.Repositories.Member;
+using BirdClubAPI.DataAccessLayer.Repositories.User;
 using BirdClubAPI.Domain.Commons.Constants;
 using BirdClubAPI.Domain.Commons.Enums;
 using BirdClubAPI.Domain.Commons.Utils;
@@ -22,14 +25,16 @@ namespace BirdClubAPI.BusinessLayer.Services.Activity
         private readonly ICommentRepository _commentRepository;
         private readonly IMemberRepository _memberRepository;
         private readonly IFeedbackRepository _feedbackRepository;
+        private readonly IUserRepository _userRepository;
 
-        public ActivityService(IActivityRepository activityRepository, IMapper mapper, ICommentRepository commentRepository, IMemberRepository memberRepository, IFeedbackRepository feedbackRepository)
+        public ActivityService(IActivityRepository activityRepository, IMapper mapper, ICommentRepository commentRepository, IMemberRepository memberRepository, IFeedbackRepository feedbackRepository, IUserRepository userRepository)
         {
             _activityRepository = activityRepository;
             _mapper = mapper;
             _commentRepository = commentRepository;
             _memberRepository = memberRepository;
             _feedbackRepository = feedbackRepository;
+            _userRepository = userRepository;
         }
 
         public KeyValuePair<MessageViewModel, AttendanceActivityViewModel?> AttendanceActivity(AttendanceActivityRequestModel requestModel)
@@ -86,7 +91,7 @@ namespace BirdClubAPI.BusinessLayer.Services.Activity
                 );
         }
 
-        public MessageViewModel DeclineAttendance(int memberId, int activityId)
+        public async Task<MessageViewModel> DeclineAttendance(int memberId, int activityId)
         {
             var alreadyRequest = _activityRepository.GetAttendanceRequest(memberId, activityId);
             if (alreadyRequest == null) return new MessageViewModel
@@ -100,6 +105,14 @@ namespace BirdClubAPI.BusinessLayer.Services.Activity
                 StatusCode = System.Net.HttpStatusCode.BadRequest,
                 Message = "Error when decline request"
             };
+
+            var notification = new Notification
+            {
+                Title = "Activity",
+                Message = $"Manager decline your request from activityId {activityId}"
+            };
+            await FirebaseHelper.Write(memberId, notification);
+
             return new MessageViewModel
             {
                 StatusCode = System.Net.HttpStatusCode.OK,
@@ -192,7 +205,7 @@ namespace BirdClubAPI.BusinessLayer.Services.Activity
             return calenderActivities.OrderBy(e => e.Date).ToList();
         }
 
-        public MessageViewModel PostAttendance(int memberId, int activityId)
+        public async Task<MessageViewModel> PostAttendance(int memberId, int activityId)
         {
             var alreadyRequest = _activityRepository.GetAttendanceRequest(memberId, activityId);
             if (alreadyRequest == null) return new MessageViewModel
@@ -212,6 +225,14 @@ namespace BirdClubAPI.BusinessLayer.Services.Activity
                 StatusCode = System.Net.HttpStatusCode.BadRequest,
                 Message = "Error when create attendance"
             };
+
+            var notification = new Notification
+            {
+                Title = "Activity",
+                Message = $"Manager approve your request attendance for activityId: {activityId}"
+            };
+            await FirebaseHelper.Write(memberId, notification);
+
             return new MessageViewModel
             {
                 StatusCode = System.Net.HttpStatusCode.OK,
@@ -219,7 +240,7 @@ namespace BirdClubAPI.BusinessLayer.Services.Activity
             };
         }
 
-        public MessageViewModel RequestAttendance(int memberId, int activityId)
+        public async Task<MessageViewModel> RequestAttendance(int memberId, int activityId)
         {
             var alreadyRequest = _activityRepository.GetAttendanceRequest(memberId, activityId);
             if (alreadyRequest != null)
@@ -239,6 +260,18 @@ namespace BirdClubAPI.BusinessLayer.Services.Activity
                     Message = "Create request fail"
                 };
             }
+
+            var listManager = _userRepository.GetManagerAndAdmin();
+            foreach (var manager in listManager)
+            {
+                var notification = new Notification
+                {
+                    Title = "Activity",
+                    Message = $"There are new activity request for activityId: {activityId}"
+                };
+                await FirebaseHelper.Write(manager.Id, notification);
+            }
+
             return new MessageViewModel
             {
                 StatusCode = System.Net.HttpStatusCode.OK,
@@ -437,7 +470,7 @@ namespace BirdClubAPI.BusinessLayer.Services.Activity
             return calenderActivities.OrderBy(e => e.Date).ToList();
         }
 
-        public bool PostComment(int id, ActivityCommentRequest request)
+        public async Task<bool> PostComment(int id, ActivityCommentRequest request)
         {
             var comment = new Comment
             {
@@ -447,7 +480,17 @@ namespace BirdClubAPI.BusinessLayer.Services.Activity
                 ReferenceId = id,
                 PublicationTime = DateTime.UtcNow.AddHours(7),
             };
-            return _commentRepository.Create(comment) != null;
+            var result = _commentRepository.Create(comment) != null;
+
+            var owner = _activityRepository.GetActivity(id)!;
+            var notification = new Notification
+            {
+                Title = "Activity",
+                Message = $"MemberId {request.OwnerId} has comment your activity"
+            };
+            await FirebaseHelper.Write(owner.OwnerId, notification);
+
+            return result;
         }
     }
 }
