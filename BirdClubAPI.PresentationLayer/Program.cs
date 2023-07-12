@@ -2,6 +2,8 @@ using BirdClubAPI.BusinessLayer.Configurations.AutoMapper;
 using BirdClubAPI.Core.DependencyInjection;
 using BirdClubAPI.PresentationLayer;
 using BirdClubAPI.PresentationLayer.Configurations.Auth;
+using FirebaseAdmin;
+using Google.Apis.Auth.OAuth2;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,6 +33,16 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 app.UseSwagger();
 app.UseSwaggerUI();
+
+#region Firebase
+
+var firebasePath = Path.Combine(Directory.GetCurrentDirectory(), "Configurations/Firebase", "birdclub-dbd3d-firebase-adminsdk-sko55-eab37a3971.json");
+FirebaseApp.Create(new AppOptions
+{
+    Credential = GoogleCredential.FromFile(firebasePath)
+});
+
+#endregion
 
 app.UseHttpsRedirection();
 

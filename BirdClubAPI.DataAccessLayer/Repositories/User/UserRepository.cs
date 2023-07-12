@@ -103,13 +103,15 @@ namespace BirdClubAPI.DataAccessLayer.Repositories.User
         }
 
 
-        public Domain.Entities.User? RejectUser(int userId)
+        public string? RejectUser(int userId)
         {
             var user = _context.Users.Where(e => e.Id == userId).FirstOrDefault();
+            var email = user?.Email;
             if (user != null)
             {
                 _context.Users.Remove(user);
                 _context.SaveChanges();
+                return email;
             } return null;
         }
 

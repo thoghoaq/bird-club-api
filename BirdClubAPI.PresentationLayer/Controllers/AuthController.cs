@@ -19,9 +19,9 @@ namespace BirdClubAPI.PresentationLayer.Controllers
         }
 
         [HttpPost]
-        public IActionResult Login(LoginFormRequestModel loginForm)
+        public async Task<IActionResult> Login(LoginFormRequestModel loginForm)
         {
-            var result = _authService.Login(loginForm);
+            var result = await _authService.Login(loginForm);
             if (result.Key.StatusCode == HttpStatusCode.OK)
             {
                 return Ok(result.Value);
@@ -33,10 +33,10 @@ namespace BirdClubAPI.PresentationLayer.Controllers
         }
 
         [HttpPost("register")]
-        public IActionResult Register(RegisterRequestModel requestModel)
+        public async Task<IActionResult> Register(RegisterRequestModel requestModel)
         {
-            var result = _authService.Register(requestModel);
-            if (result == true)
+            var result = await _authService.Register(requestModel);
+            if (result)
             {
                 return Ok();
             } else
@@ -73,9 +73,9 @@ namespace BirdClubAPI.PresentationLayer.Controllers
         }
 
         [HttpDelete("{id}/reject")]
-        public ActionResult RejectUser(int id)
+        public async Task<ActionResult> RejectUser(int id)
         {
-            var reponse = _authService.RejectUser(id);
+            var reponse = await _authService.RejectUser(id);
             if (reponse.StatusCode == HttpStatusCode.OK)
             {
                 return Ok(reponse);
@@ -92,6 +92,13 @@ namespace BirdClubAPI.PresentationLayer.Controllers
         {
             var response = _authService.ShowUser();           
             return Ok(response);
+        }
+
+        [HttpPost("resend-email")]
+        public async Task<IActionResult> ResendEmail(string email)
+        {
+            await _authService.ResendEmail(email);
+            return NoContent();
         }
     }
 }

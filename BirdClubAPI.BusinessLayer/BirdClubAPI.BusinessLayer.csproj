@@ -7,12 +7,18 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Helpers\" />
+    <PackageReference Include="FirebaseAdmin" Version="2.3.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\BirdClubAPI.DataAccessLayer\BirdClubAPI.DataAccessLayer.csproj" />
     <ProjectReference Include="..\BirdClubAPI.Domain\BirdClubAPI.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Helpers\template.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

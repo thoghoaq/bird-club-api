@@ -1,10 +1,12 @@
 ﻿using AutoMapper;
+using BirdClubAPI.BusinessLayer.Helpers;
 using BirdClubAPI.DataAccessLayer.Repositories.User;
 using BirdClubAPI.Domain.Commons.Utils;
 using BirdClubAPI.Domain.DTOs.Request.Auth;
 using BirdClubAPI.Domain.DTOs.View.Auth;
 using BirdClubAPI.Domain.DTOs.View.Common;
 using BirdClubAPI.Domain.DTOs.View.Member;
+using FirebaseAdmin.Auth;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.Net;
@@ -71,7 +73,7 @@ namespace BirdClubAPI.BusinessLayer.Services.Auth
                 );
         }
 
-        public KeyValuePair<MessageViewModel, AuthViewModel?> Login(LoginFormRequestModel loginFormRequest)
+        public async Task<KeyValuePair<MessageViewModel, AuthViewModel?>> Login(LoginFormRequestModel loginFormRequest)
         {
             var user = _userRepository.Get(loginFormRequest.Email, loginFormRequest.Password);
             if (user == null)
@@ -88,6 +90,17 @@ namespace BirdClubAPI.BusinessLayer.Services.Auth
                 null
                 );
             }
+
+            // Check Email Verified
+            var auth = FirebaseAuth.DefaultInstance;
+            var record = await auth.GetUserByEmailAsync(user.Email);
+            if (record == null || !record.EmailVerified) {
+                return new KeyValuePair<MessageViewModel, AuthViewModel?>(
+                new MessageViewModel { StatusCode = HttpStatusCode.Unauthorized, Message = "This user does not verify email" },
+                null
+                );
+            }
+
             var viewModel = new KeyValuePair<MessageViewModel, AuthViewModel?>(
                 new MessageViewModel { StatusCode = HttpStatusCode.OK, Message = "Authenticated" },
                 _mapper.Map<AuthViewModel>(user)
@@ -97,7 +110,7 @@ namespace BirdClubAPI.BusinessLayer.Services.Auth
             return viewModel;
         }
 
-        public bool Register(RegisterRequestModel requestModel)
+        public async Task<bool> Register(RegisterRequestModel requestModel)
         {
             // Check condition
             if (requestModel.Email.IsNullOrEmpty() || requestModel.Password.Length < 8)
@@ -107,14 +120,34 @@ namespace BirdClubAPI.BusinessLayer.Services.Auth
 
             var model = _userRepository.Create(requestModel);
             if (model == null) return false;
+
+            // Email verification
+            var auth = FirebaseAuth.DefaultInstance;
+            var newUser = await auth.CreateUserAsync(new UserRecordArgs
+            {
+                Email = model.Email,
+                DisplayName = model.DisplayName,
+                Password = model.Password
+            });
+            var verificationLink = await auth.GenerateEmailVerificationLinkAsync(newUser.Email);
+
+            string subject = "BirdClub Registration Verification";
+            string txtMessage = "BirdClub Registration Verification";
+            await MailHelper.SendEmail(newUser.Email, subject, txtMessage, verificationLink);
+
             return true;
         }
 
-        public MessageViewModel RejectUser(int id)
+        public async Task<MessageViewModel> RejectUser(int id)
         {
-            var user = _userRepository.RejectUser(id);
-            if (user != null)
+            var email = _userRepository.RejectUser(id);
+            if (email != null)
             {
+                // Remove from Firebase
+                var auth = FirebaseAuth.DefaultInstance;
+                var userRecord = await auth.GetUserByEmailAsync(email);
+                await auth.DeleteUserAsync(userRecord.Uid);
+
                 return new MessageViewModel
                 {
                     StatusCode = System.Net.HttpStatusCode.NoContent,
@@ -125,10 +158,22 @@ namespace BirdClubAPI.BusinessLayer.Services.Auth
             {
                 return new MessageViewModel
                 {
-                    StatusCode = System.Net.HttpStatusCode.OK,
+                    StatusCode = System.Net.HttpStatusCode.Conflict,
                     Message = string.Empty
                 };
             }
+        }
+
+        public async Task<bool> ResendEmail(string email)
+        {
+            var auth = FirebaseAuth.DefaultInstance;
+            var verificationLink = await auth.GenerateEmailVerificationLinkAsync(email);
+
+            string subject = "BirdClub Registration Verification";
+            string txtMessage = "BirdClub Registration Verification";
+            await MailHelper.SendEmail(email, subject, txtMessage, verificationLink);
+
+            return true;
         }
 
         public UserViewModel ShowUser()
