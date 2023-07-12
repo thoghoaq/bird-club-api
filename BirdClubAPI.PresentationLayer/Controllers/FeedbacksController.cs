@@ -39,9 +39,9 @@ namespace BirdClubAPI.PresentationLayer.Controllers
         ///// <returns></returns>
         [HttpPost]
 
-        public IActionResult CreateFeedback(CreateFeedbackRequestModel requestModel)
+        public async Task<IActionResult> CreateFeedback(CreateFeedbackRequestModel requestModel)
         {
-            var result = _feedbackService.CreateFeedback(requestModel);
+            var result = await _feedbackService.CreateFeedback(requestModel);
             if (result.Key.StatusCode.Equals(HttpStatusCode.InternalServerError))
             {
                 return BadRequest(result.Key);
