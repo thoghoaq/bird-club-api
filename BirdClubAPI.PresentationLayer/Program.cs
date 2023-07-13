@@ -4,6 +4,7 @@ using BirdClubAPI.PresentationLayer;
 using BirdClubAPI.PresentationLayer.Configurations.Auth;
 using FirebaseAdmin;
 using Google.Apis.Auth.OAuth2;
+using Hangfire;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +13,17 @@ builder.Services.ConfigureDependencyInjection(builder.Configuration);
 builder.Services.ConfigureAutoMapper();
 builder.Services.ConfigureSwaggerServices("BirdClub.APIs");
 builder.Services.ConfigureAuthServices(builder.Configuration);
+
+#region Hangfire
+builder.Services.AddHangfire(configuration => configuration
+                    .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
+                    .UseSimpleAssemblyNameTypeSerializer()
+                    .UseRecommendedSerializerSettings()
+                    .UseSqlServerStorage(builder.Configuration.GetConnectionString("BirdClub")));
+
+// Add the processing server as IHostedService
+builder.Services.AddHangfireServer();
+#endregion Hangfire
 
 var myCors = "MyCors";
 builder.Services.AddCors(
@@ -51,5 +63,9 @@ app.UseCors(myCors);
 app.UseAuthApps();
 
 app.MapControllers();
+
+app.UseHangfireDashboard();
+
+app.MapHangfireDashboard();
 
 app.Run();

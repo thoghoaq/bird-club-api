@@ -1,4 +1,5 @@
-﻿using BirdClubAPI.BusinessLayer.Services.Activity;
+﻿using BirdClubAPI.BusinessLayer.Jobs;
+using BirdClubAPI.BusinessLayer.Services.Activity;
 using BirdClubAPI.BusinessLayer.Services.Auth;
 using BirdClubAPI.BusinessLayer.Services.Bird;
 using BirdClubAPI.BusinessLayer.Services.Feedback;
@@ -50,6 +51,10 @@ namespace BirdClubAPI.Core.DependencyInjection
 
             services.AddTransient<ICommentRepository, CommentRepository>();
             services.AddTransient<ILikeRepository, LikeRepository>();
+
+            #region Jobs
+            services.AddScoped<IRecurringJobs, RecurringJobs>();
+            #endregion Jobs
 
             return services;
         }
