@@ -1,4 +1,5 @@
-﻿using BirdClubAPI.BusinessLayer.Services.Auth;
+﻿using BirdClubAPI.BusinessLayer.Helpers;
+using BirdClubAPI.BusinessLayer.Services.Auth;
 using BirdClubAPI.Domain.DTOs.Request.Auth;
 using BirdClubAPI.Domain.DTOs.View.Auth;
 using BirdClubAPI.Domain.DTOs.View.Common;
@@ -19,24 +20,33 @@ namespace BirdClubAPI.PresentationLayer.Controllers
         }
 
         [HttpPost]
-        public IActionResult Login(LoginFormRequestModel loginForm)
+        public async Task<IActionResult> Login(LoginFormRequestModel loginForm)
         {
-            var result = _authService.Login(loginForm);
-            if (result.Key.StatusCode == HttpStatusCode.OK)
+            try
             {
-                return Ok(result.Value);
-            }
-            else
+                var result = await _authService.Login(loginForm);
+                if (result.Key.StatusCode == HttpStatusCode.OK)
+                {
+                    return Ok(result.Value);
+                }
+                else
+                {
+                    return Unauthorized(result.Key);
+                }
+            } catch (Exception ex)
             {
-                return Unauthorized(result.Key);
+                return StatusCode((int)HttpStatusCode.InternalServerError, new
+                {
+                    ex.Message
+                });
             }
         }
 
         [HttpPost("register")]
-        public IActionResult Register(RegisterRequestModel requestModel)
+        public async Task<IActionResult> Register(RegisterRequestModel requestModel)
         {
-            var result = _authService.Register(requestModel);
-            if (result == true)
+            var result = await _authService.Register(requestModel);
+            if (result)
             {
                 return Ok();
             } else
@@ -59,9 +69,9 @@ namespace BirdClubAPI.PresentationLayer.Controllers
             return Ok(response.Value);
         }
         [HttpPost("{id}/approve")]
-        public ActionResult ApproveMember(int id)
+        public async Task<ActionResult> ApproveMember(int id)
         {
-            var reponse = _authService.ApproveMember(id);
+            var reponse = await _authService.ApproveMember(id);
             if (reponse.StatusCode == HttpStatusCode.OK)
             {
                 return Ok(reponse);
@@ -71,11 +81,12 @@ namespace BirdClubAPI.PresentationLayer.Controllers
                 return NotFound(reponse);
             }
         }
+
         [HttpDelete("{id}/reject")]
-        public ActionResult RejectUser(int id) 
+        public async Task<ActionResult> RejectUser(int id)
         {
-            var reponse = _authService.RejectUser(id);
-            if(reponse.StatusCode == HttpStatusCode.OK)
+            var reponse = await _authService.RejectUser(id);
+            if (reponse.StatusCode == HttpStatusCode.OK)
             {
                 return Ok(reponse);
             }
@@ -83,6 +94,25 @@ namespace BirdClubAPI.PresentationLayer.Controllers
             {
                 return NoContent();
             }
+        }
+
+
+        [HttpGet]
+        public ActionResult ShowUser()
+        {
+            var response = _authService.ShowUser();           
+            return Ok(response);
+        }
+
+        [HttpPost("resend-email")]
+        public async Task<IActionResult> ResendEmail(string email)
+        {
+            var result = await _authService.ResendEmail(email);
+            if (!result)
+            {
+                return BadRequest(new { message = "Email has verified" });
+            }
+            return NoContent();
         }
     }
 }

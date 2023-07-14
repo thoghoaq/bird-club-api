@@ -6,5 +6,6 @@ namespace BirdClubAPI.Domain.DTOs.Response.Activity
     {
         public AttendanceStatusEnum Status { get; set; }
         public string Message { get; set; } = null!;
+        public bool? IsFeedback { get; set; }
     }
 }

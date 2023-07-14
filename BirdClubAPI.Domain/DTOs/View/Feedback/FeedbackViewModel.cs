@@ -9,6 +9,7 @@ namespace BirdClubAPI.Domain.DTOs.View.Feedback
     public class FeedbackViewModel
     {
         public int OwnerId { get; set; }
+        public string? OwnerName { get; set; }
         public int ActivityId { get; set; }
         public DateTime Time { get; set; }
         public string? Content { get; set; }

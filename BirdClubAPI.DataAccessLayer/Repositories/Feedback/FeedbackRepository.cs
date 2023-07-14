@@ -41,6 +41,7 @@ namespace BirdClubAPI.DataAccessLayer.Repositories.Feedback
         public List<FeedbackResponseModel> GetFeedbacks(int activityId)
         {
             var feedbacks = _context.Feedbacks
+               .Include(x => x.Owner.User)
                .Where(e  => e.ActivityId == activityId)
                .ToList();
                if(feedbacks.IsNullOrEmpty())

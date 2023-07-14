@@ -7,10 +7,12 @@ namespace BirdClubAPI.BusinessLayer.Services.Auth
 {
     public interface IAuthService
     {
-        MessageViewModel ApproveMember(int id);
+        Task<MessageViewModel> ApproveMember(int id);
         KeyValuePair<MessageViewModel, List<GuestViewModel?>> GetListGuest();
-        KeyValuePair<MessageViewModel, AuthViewModel?> Login (LoginFormRequestModel loginFormRequest);
-        bool Register(RegisterRequestModel requestModel);
-        MessageViewModel RejectUser(int id);
+        Task<KeyValuePair<MessageViewModel, AuthViewModel?>> Login (LoginFormRequestModel loginFormRequest);
+        Task<bool> Register(RegisterRequestModel requestModel);
+        Task<MessageViewModel> RejectUser(int id);
+        Task<bool> ResendEmail(string email);
+        UserViewModel ShowUser();
     }
 }

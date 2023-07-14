@@ -1,6 +1,7 @@
 ﻿using BirdClubAPI.BusinessLayer.Services.Newsfeed;
 using BirdClubAPI.Domain.DTOs.Request.Attendance;
 using BirdClubAPI.Domain.DTOs.Request.Newsfeed.Blog;
+using BirdClubAPI.Domain.DTOs.Request.Newsfeed.Comment;
 using BirdClubAPI.Domain.DTOs.View.Blog;
 using BirdClubAPI.Domain.DTOs.View.Newsfeed;
 using Microsoft.AspNetCore.Mvc;
@@ -26,8 +27,8 @@ namespace BirdClubAPI.PresentationLayer.Controllers
         /// {size} is number records of a page
         /// </summary>
         [HttpGet]
-        public ActionResult<NewsfeedViewModel> GetNewsfeeds(int limit, int page, int size) {
-            return Ok(_newsfeedService.GetNewsfeeds(limit, page, size));
+        public ActionResult<NewsfeedViewModel> GetNewsfeeds(int page, int size, int? memberId) {
+            return Ok(_newsfeedService.GetNewsfeeds(page, size, memberId));
         }
 
         /// <summary>
@@ -95,6 +96,19 @@ namespace BirdClubAPI.PresentationLayer.Controllers
                 return Ok(result);
             }
             return BadRequest(result);
+        }
+
+        [HttpPost("{id}/comment")]
+        public IActionResult PostComment(NewsfeedCommentRequest request)
+        {
+            try
+            {
+                var result = _newsfeedService.PostComment(request);
+                return CreatedAtAction("PostComment", result);
+            } catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }

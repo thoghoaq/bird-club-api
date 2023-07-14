@@ -22,12 +22,12 @@ namespace BirdClubAPI.DataAccessLayer.Repositories.Activity
 
         public ActivityResponseModel? AttendanceActivity(Domain.Entities.Attendance attendance)
         {
-           try
+            try
             {
                 var result = _context.Add(attendance);
                 _context.SaveChanges();
                 return _mapper.Map<ActivityResponseModel>(result.Entity);
-            } 
+            }
             catch
             {
                 return null;
@@ -40,7 +40,7 @@ namespace BirdClubAPI.DataAccessLayer.Repositories.Activity
             {
                 var result = _context.Add(activity);
                 _context.SaveChanges();
-                return  _mapper.Map<ActivityResponseModel>(result.Entity);
+                return _mapper.Map<ActivityResponseModel>(result.Entity);
             }
             catch
             {
@@ -62,9 +62,14 @@ namespace BirdClubAPI.DataAccessLayer.Repositories.Activity
             }
         }
 
-        public List<ActivityResponseModel> GetActivities()
+        public List<ActivityResponseModel> GetActivities(bool? isAll = false)
         {
-            var activities = _context.Activities
+            var activities = isAll == true ? 
+                _context.Activities
+                .Include(e => e.Owner)
+                    .ThenInclude(e => e.User)
+                .ToList() : 
+                _context.Activities
                 .Where(e => e.Status == true)
                 .Include(e => e.Owner)
                     .ThenInclude(e => e.User)
@@ -81,8 +86,9 @@ namespace BirdClubAPI.DataAccessLayer.Repositories.Activity
             var activity = _context.Activities
                 .Include(e => e.Owner)
                     .ThenInclude(e => e.User)
+                .Include(e => e.Comments.Where(e => e.Type == "ACTIVITY"))
                 .SingleOrDefault(e => e.Id == id);
-            if (activity == null || activity.Status == false)
+            if (activity == null)
             {
                 return null;
             }
@@ -99,12 +105,19 @@ namespace BirdClubAPI.DataAccessLayer.Repositories.Activity
             return activity;
         }
 
-        public List<MemberResponseModel> GetAttendance()
+        public List<MemberResponseModel> GetAttendance(int activityId)
         {
-            var members = _context.Members.ToList();
+            var members = _context.Attendances
+                .Where(e => e.ActivityId == activityId)
+                .Select(e => new MemberResponseModel
+                {
+                    MemberId = e.MemberId,
+                    Avatar = e.Member.Avatar,
+                    DisplayName = e.Member.User.DisplayName
+                });
             return _mapper.Map<List<MemberResponseModel>>(members);
         }
-        
+
         public List<ActivityResponseModel> GetActivitiesByOwner(int ownerId)
         {
             var activities = _context.Activities

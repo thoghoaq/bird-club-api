@@ -1,5 +1,6 @@
 ﻿using BirdClubAPI.Domain.Commons.Enums;
 using BirdClubAPI.Domain.DTOs.Response.Blog;
+using BirdClubAPI.Domain.DTOs.Response.Comment;
 using BirdClubAPI.Domain.DTOs.Response.Member;
 using BirdClubAPI.Domain.DTOs.Response.Record;
 

@@ -16,7 +16,6 @@ namespace BirdClubAPI.PresentationLayer.Configurations.AutoMapper.Modules
                 .ReverseMap();
             mc.CreateMap<NewsfeedViewModel, NewsfeedResponseModel>().ReverseMap();
             mc.CreateMap<Newsfeed, NewsfeedViewModel>().ReverseMap();
-
         }
     }
 }
