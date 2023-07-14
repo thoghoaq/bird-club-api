@@ -10,6 +10,7 @@ using BirdClubAPI.Domain.DTOs.Request.Newsfeed.Comment;
 using BirdClubAPI.DataAccessLayer.Repositories.Comment;
 using BirdClubAPI.DataAccessLayer.Repositories.Like;
 using BirdClubAPI.BusinessLayer.Helpers;
+using BirdClubAPI.Domain.DTOs.Request.Activity;
 
 namespace BirdClubAPI.BusinessLayer.Services.Newsfeed
 {
@@ -159,7 +160,7 @@ namespace BirdClubAPI.BusinessLayer.Services.Newsfeed
             return response;
         }
 
-        public CommentRm? PostComment(NewsfeedCommentRequest request)
+        public async Task<CommentRm?> PostComment(NewsfeedCommentRequest request)
         {
             var newsfeed = _newsfeedRepository.GetNewsFeedById(request.NewsfeedId);
             var type = newsfeed?.Blog != null ? "BLOG" : "RECORD";
@@ -174,6 +175,12 @@ namespace BirdClubAPI.BusinessLayer.Services.Newsfeed
             var result = _commentRepository.Create(comment);
             if (result != null)
             {
+                var notification = new Notification
+                {
+                    Title = "Newsfeed",
+                    Message = $"Some one have comment your newsfeed {request.NewsfeedId}"
+                };
+                await FirebaseHelper.Write(request.OwnerId, notification);
                 return _mapper.Map<CommentRm>(result);
             } else
             {
@@ -230,8 +237,7 @@ namespace BirdClubAPI.BusinessLayer.Services.Newsfeed
                     };
                 }
             }
-        }
-
+        }        
 
 
         public KeyValuePair<MessageViewModel, BlogViewModel?> UpdateBlog(int id, UpdateBlogRm request)

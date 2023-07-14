@@ -99,11 +99,11 @@ namespace BirdClubAPI.PresentationLayer.Controllers
         }
 
         [HttpPost("{id}/comment")]
-        public IActionResult PostComment(NewsfeedCommentRequest request)
+        public async Task<IActionResult> PostComment(NewsfeedCommentRequest request)
         {
             try
             {
-                var result = _newsfeedService.PostComment(request);
+                var result = await _newsfeedService.PostComment(request);
                 return CreatedAtAction("PostComment", result);
             } catch (Exception ex)
             {
