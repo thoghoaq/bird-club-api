@@ -9,6 +9,7 @@ using BirdClubAPI.Domain.DTOs.Response.Comment;
 using BirdClubAPI.Domain.DTOs.Request.Newsfeed.Comment;
 using BirdClubAPI.DataAccessLayer.Repositories.Comment;
 using BirdClubAPI.DataAccessLayer.Repositories.Like;
+using BirdClubAPI.BusinessLayer.Helpers;
 
 namespace BirdClubAPI.BusinessLayer.Services.Newsfeed
 {
@@ -100,7 +101,7 @@ namespace BirdClubAPI.BusinessLayer.Services.Newsfeed
         public NewsfeedViewModel GetNewsFeed(int memberid)
         {
 
-            var newsfeed =_newsfeedRepository.GetNewsFeed(memberid);
+            var newsfeed = _newsfeedRepository.GetNewsFeed(memberid);
             if (newsfeed != null)
             {
                 foreach (var item in newsfeed)
@@ -180,7 +181,7 @@ namespace BirdClubAPI.BusinessLayer.Services.Newsfeed
             }
         }
 
-        public MessageViewModel PostLiked(int memberId, int newsfeedId)
+        public async Task <MessageViewModel> PostLiked(int memberId, int newsfeedId)
         {
             var alreadyLiked = _newsfeedRepository.GetLike(memberId, newsfeedId);
             if (alreadyLiked == null)
@@ -188,6 +189,12 @@ namespace BirdClubAPI.BusinessLayer.Services.Newsfeed
                 var like = _newsfeedRepository.PostLiked(memberId, newsfeedId);
                 if (like != null)
                 {
+                    var notification = new Notification
+                    {
+                        Title = "Newsfeed",
+                        Message = $"Some one have liked your newsfeed {newsfeedId}"
+                    };
+                    await FirebaseHelper.Write(memberId, notification);
                     return new MessageViewModel
                     {
                         StatusCode = System.Net.HttpStatusCode.OK,
