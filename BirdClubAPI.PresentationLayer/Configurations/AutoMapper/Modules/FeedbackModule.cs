@@ -10,7 +10,10 @@ namespace BirdClubAPI.PresentationLayer.Configurations.AutoMapper.Modules
         public static void ConfigFeedbackModule(this IMapperConfigurationExpression mc)
         {
             mc.CreateMap<FeedbackResponseModel, FeedbackViewModel>().ReverseMap();
-            mc.CreateMap<Feedback, FeedbackResponseModel>().ReverseMap();
+            mc.CreateMap<Feedback, FeedbackResponseModel>()
+                .ForMember(dest => dest.OwnerName, otps => otps.MapFrom(src => src.Owner.User.DisplayName))
+                .ReverseMap();
+            mc.CreateMap<Feedback, CreateFeedbackViewModel>().ReverseMap();
         }
     }
 }

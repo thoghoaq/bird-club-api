@@ -1,12 +1,20 @@
 ﻿using AutoMapper;
+using AutoMapper.Execution;
+using BirdClubAPI.BusinessLayer.Helpers;
 using BirdClubAPI.DataAccessLayer.Repositories.Activity;
+using BirdClubAPI.DataAccessLayer.Repositories.Comment;
+using BirdClubAPI.DataAccessLayer.Repositories.Feedback;
+using BirdClubAPI.DataAccessLayer.Repositories.Member;
+using BirdClubAPI.DataAccessLayer.Repositories.User;
 using BirdClubAPI.Domain.Commons.Constants;
 using BirdClubAPI.Domain.Commons.Enums;
 using BirdClubAPI.Domain.Commons.Utils;
 using BirdClubAPI.Domain.DTOs.Request.Activity;
 using BirdClubAPI.Domain.DTOs.Response.Activity;
+using BirdClubAPI.Domain.DTOs.Response.Member;
 using BirdClubAPI.Domain.DTOs.View.Acitivity;
 using BirdClubAPI.Domain.DTOs.View.Common;
+using BirdClubAPI.Domain.Entities;
 
 namespace BirdClubAPI.BusinessLayer.Services.Activity
 {
@@ -14,11 +22,19 @@ namespace BirdClubAPI.BusinessLayer.Services.Activity
     {
         private readonly IActivityRepository _activityRepository;
         private readonly IMapper _mapper;
+        private readonly ICommentRepository _commentRepository;
+        private readonly IMemberRepository _memberRepository;
+        private readonly IFeedbackRepository _feedbackRepository;
+        private readonly IUserRepository _userRepository;
 
-        public ActivityService(IActivityRepository activityRepository, IMapper mapper)
+        public ActivityService(IActivityRepository activityRepository, IMapper mapper, ICommentRepository commentRepository, IMemberRepository memberRepository, IFeedbackRepository feedbackRepository, IUserRepository userRepository)
         {
             _activityRepository = activityRepository;
             _mapper = mapper;
+            _commentRepository = commentRepository;
+            _memberRepository = memberRepository;
+            _feedbackRepository = feedbackRepository;
+            _userRepository = userRepository;
         }
 
         public KeyValuePair<MessageViewModel, AttendanceActivityViewModel?> AttendanceActivity(AttendanceActivityRequestModel requestModel)
@@ -75,7 +91,7 @@ namespace BirdClubAPI.BusinessLayer.Services.Activity
                 );
         }
 
-        public MessageViewModel DeclineAttendance(int memberId, int activityId)
+        public async Task<MessageViewModel> DeclineAttendance(int memberId, int activityId)
         {
             var alreadyRequest = _activityRepository.GetAttendanceRequest(memberId, activityId);
             if (alreadyRequest == null) return new MessageViewModel
@@ -89,6 +105,14 @@ namespace BirdClubAPI.BusinessLayer.Services.Activity
                 StatusCode = System.Net.HttpStatusCode.BadRequest,
                 Message = "Error when decline request"
             };
+
+            var notification = new Notification
+            {
+                Title = "Activity",
+                Message = $"Manager decline your request from activityId {activityId}"
+            };
+            await FirebaseHelper.Write(memberId, notification);
+
             return new MessageViewModel
             {
                 StatusCode = System.Net.HttpStatusCode.OK,
@@ -96,9 +120,13 @@ namespace BirdClubAPI.BusinessLayer.Services.Activity
             };
         }
 
-        public List<AcitivityViewModel> GetActivities()
+        public List<AcitivityViewModel> GetActivities(bool? isAll)
         {
-            List<ActivityResponseModel> activities = _activityRepository.GetActivities();
+            List<ActivityResponseModel> activities = _activityRepository.GetActivities(isAll);
+            foreach ( var activityResponse in activities )
+            {
+                activityResponse.FeedbackCount = _feedbackRepository.GetFeedbacks(activityResponse.Id).Count;
+            }
             return _mapper.Map<List<AcitivityViewModel>>(activities);
         }
 
@@ -119,7 +147,7 @@ namespace BirdClubAPI.BusinessLayer.Services.Activity
             }
             else
             {
-                var response = _activityRepository.GetAttendance();
+                var response = _activityRepository.GetAttendance(id);
                 if (response == null)
                 {
                     return new KeyValuePair<MessageViewModel, List<AttendanceViewModel?>>(
@@ -145,6 +173,10 @@ namespace BirdClubAPI.BusinessLayer.Services.Activity
         public List<AcitivityViewModel> GetActivitiesByOwner(int ownerId)
         {
             List<ActivityResponseModel> activities = _activityRepository.GetActivitiesByOwner(ownerId);
+            foreach (var act in activities)
+            {
+                act.RequestCount = _activityRepository.GetAttendanceRequests(act.Id).Count;
+            }
             return _mapper.Map<List<AcitivityViewModel>>(activities);
         }
 
@@ -173,7 +205,7 @@ namespace BirdClubAPI.BusinessLayer.Services.Activity
             return calenderActivities.OrderBy(e => e.Date).ToList();
         }
 
-        public MessageViewModel PostAttendance(int memberId, int activityId)
+        public async Task<MessageViewModel> PostAttendance(int memberId, int activityId)
         {
             var alreadyRequest = _activityRepository.GetAttendanceRequest(memberId, activityId);
             if (alreadyRequest == null) return new MessageViewModel
@@ -193,6 +225,14 @@ namespace BirdClubAPI.BusinessLayer.Services.Activity
                 StatusCode = System.Net.HttpStatusCode.BadRequest,
                 Message = "Error when create attendance"
             };
+
+            var notification = new Notification
+            {
+                Title = "Activity",
+                Message = $"Manager approve your request attendance for activityId: {activityId}"
+            };
+            await FirebaseHelper.Write(memberId, notification);
+
             return new MessageViewModel
             {
                 StatusCode = System.Net.HttpStatusCode.OK,
@@ -200,7 +240,7 @@ namespace BirdClubAPI.BusinessLayer.Services.Activity
             };
         }
 
-        public MessageViewModel RequestAttendance(int memberId, int activityId)
+        public async Task<MessageViewModel> RequestAttendance(int memberId, int activityId)
         {
             var alreadyRequest = _activityRepository.GetAttendanceRequest(memberId, activityId);
             if (alreadyRequest != null)
@@ -220,6 +260,18 @@ namespace BirdClubAPI.BusinessLayer.Services.Activity
                     Message = "Create request fail"
                 };
             }
+
+            var listManager = _userRepository.GetManagerAndAdmin();
+            foreach (var manager in listManager)
+            {
+                var notification = new Notification
+                {
+                    Title = "Activity",
+                    Message = $"There are new activity request for activityId: {activityId}"
+                };
+                await FirebaseHelper.Write(manager.Id, notification);
+            }
+
             return new MessageViewModel
             {
                 StatusCode = System.Net.HttpStatusCode.OK,
@@ -229,10 +281,12 @@ namespace BirdClubAPI.BusinessLayer.Services.Activity
         public AttendanceStatusRm GetUserAttendanceStatus(int id, int memberId)
         {
             var activity = _activityRepository.GetActivitieWithAttendance(id);
+            var isFeedback = _feedbackRepository.GetFeedbacks(id).AsQueryable().Any(e => e.OwnerId == memberId);
             if (activity == null) return new AttendanceStatusRm
             {
                 Status = AttendanceStatusEnum.NOT_FOUND,
                 Message = AttendanceStatusConstants.NOT_FOUND,
+                IsFeedback = isFeedback
             };
             if (activity.EndTime.CompareTo(DateTime.UtcNow.AddHours(7)) < 0)
             {
@@ -240,6 +294,7 @@ namespace BirdClubAPI.BusinessLayer.Services.Activity
                 {
                     Status = AttendanceStatusEnum.CLOSED,
                     Message = AttendanceStatusConstants.CLOSED,
+                    IsFeedback = isFeedback
                 };
             }
             if (activity.AttendanceRequests.Any(e => e.MemberId == memberId))
@@ -248,6 +303,7 @@ namespace BirdClubAPI.BusinessLayer.Services.Activity
                 {
                     Status = AttendanceStatusEnum.PENDING,
                     Message = AttendanceStatusConstants.PENDING,
+                    IsFeedback = isFeedback
                 };
             }
             else if (activity.Attendances.Any(e => e.MemberId == memberId))
@@ -256,6 +312,7 @@ namespace BirdClubAPI.BusinessLayer.Services.Activity
                 {
                     Status = AttendanceStatusEnum.ACCEPTED,
                     Message = AttendanceStatusConstants.ACCEPTED,
+                    IsFeedback = isFeedback
                 };
             }
             else
@@ -264,6 +321,7 @@ namespace BirdClubAPI.BusinessLayer.Services.Activity
                 {
                     Status = AttendanceStatusEnum.NOT_ATTEND,
                     Message = AttendanceStatusConstants.NOT_ATTEND,
+                    IsFeedback = isFeedback
                 };
             }
         }
@@ -341,6 +399,11 @@ namespace BirdClubAPI.BusinessLayer.Services.Activity
                     null
                 );
             }
+
+            foreach (var comment in activity.Comments)
+            {
+                comment.Owner = _mapper.Map<MemberResponseModel>(_memberRepository.GetMember(comment.OwnerId));
+            }
             var response = _mapper.Map<AcitivityViewModel>(activity);
             return new KeyValuePair<MessageViewModel, AcitivityViewModel?>(
                 new MessageViewModel
@@ -405,6 +468,29 @@ namespace BirdClubAPI.BusinessLayer.Services.Activity
                 }
             }
             return calenderActivities.OrderBy(e => e.Date).ToList();
+        }
+
+        public async Task<bool> PostComment(int id, ActivityCommentRequest request)
+        {
+            var comment = new Comment
+            {
+                OwnerId = request.OwnerId,
+                Content = request.Content,
+                Type = "ACTIVITY",
+                ReferenceId = id,
+                PublicationTime = DateTime.UtcNow.AddHours(7),
+            };
+            var result = _commentRepository.Create(comment) != null;
+
+            var owner = _activityRepository.GetActivity(id)!;
+            var notification = new Notification
+            {
+                Title = "Activity",
+                Message = $"MemberId {request.OwnerId} has comment your activity"
+            };
+            await FirebaseHelper.Write(owner.OwnerId, notification);
+
+            return result;
         }
     }
 }

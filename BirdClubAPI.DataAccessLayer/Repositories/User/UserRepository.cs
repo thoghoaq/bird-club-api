@@ -1,7 +1,9 @@
 ﻿using BirdClubAPI.DataAccessLayer.Context;
 using BirdClubAPI.Domain.Commons.Constants;
 using BirdClubAPI.Domain.DTOs.Request.Auth;
+using BirdClubAPI.Domain.DTOs.Response.User;
 using BirdClubAPI.Domain.DTOs.View.Auth;
+using BirdClubAPI.Domain.DTOs.View.Member;
 using Microsoft.EntityFrameworkCore;
 
 namespace BirdClubAPI.DataAccessLayer.Repositories.User
@@ -21,7 +23,7 @@ namespace BirdClubAPI.DataAccessLayer.Repositories.User
             if (user == null) return null;
             if (user.UserType == UserTypeConstants.GUEST)
             {
-     
+
                 user.UserType = UserTypeConstants.MEMBER;
                 _context.SaveChanges();
 
@@ -33,7 +35,7 @@ namespace BirdClubAPI.DataAccessLayer.Repositories.User
                 };
                 _context.Members.Add(member);
                 _context.SaveChanges();
-                
+
 
                 return user;
             }
@@ -69,7 +71,7 @@ namespace BirdClubAPI.DataAccessLayer.Repositories.User
                 {
                     Id = e.Id,
                     Email = e.Email,
-                    DisplayName= e.DisplayName,
+                    DisplayName = e.DisplayName,
                     Password = e.Password,
                     UserType = e.UserType,
                     Member = e.Member
@@ -100,14 +102,32 @@ namespace BirdClubAPI.DataAccessLayer.Repositories.User
             }
         }
 
-        public Domain.Entities.User? RejectUser(int userId)
+        public List<Domain.Entities.User> GetManagerAndAdmin()
         {
-            var user = _context.Users.Where(e => e.Id== userId).FirstOrDefault();
+            return _context.Users.Where(e => e.UserType == UserTypeConstants.ADMIN || e.UserType == UserTypeConstants.MANAGER).ToList();
+        }
+
+        public string? RejectUser(int userId)
+        {
+            var user = _context.Users.Where(e => e.Id == userId).FirstOrDefault();
+            var email = user?.Email;
             if (user != null)
             {
                 _context.Users.Remove(user);
                 _context.SaveChanges();
-            }return null;
+                return email;
+            } return null;
+        }
+
+        public List<UserResponseModel> ShowUser()
+        {
+            return _context.Users.Select(e => new UserResponseModel
+            {
+                Id = e.Id,
+                Email = e.Email,
+                DisplayName = e.DisplayName,
+                UserType = e.UserType
+            }).ToList();
         }
     }
 }

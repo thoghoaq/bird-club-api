@@ -1,14 +1,14 @@
 ﻿using AutoMapper;
-using BirdClubAPI.Domain.Commons.Enums;
 using BirdClubAPI.DataAccessLayer.Repositories.Newsfeed;
 using BirdClubAPI.Domain.DTOs.View.Newsfeed;
 using BirdClubAPI.Domain.DTOs.View.Common;
 using BirdClubAPI.Domain.DTOs.View.Blog;
 using BirdClubAPI.Domain.DTOs.Request.Newsfeed.Blog;
 using BirdClubAPI.Domain.Entities;
-using BirdClubAPI.Domain.DTOs.Response.Blog;
-using BirdClubAPI.Domain.DTOs.Response.Activity;
-using BirdClubAPI.Domain.DTOs.Response.Newsfeed;
+using BirdClubAPI.Domain.DTOs.Response.Comment;
+using BirdClubAPI.Domain.DTOs.Request.Newsfeed.Comment;
+using BirdClubAPI.DataAccessLayer.Repositories.Comment;
+using BirdClubAPI.DataAccessLayer.Repositories.Like;
 
 namespace BirdClubAPI.BusinessLayer.Services.Newsfeed
 {
@@ -16,11 +16,15 @@ namespace BirdClubAPI.BusinessLayer.Services.Newsfeed
     {
         private readonly INewsfeedRepository _newsfeedRepository;
         private readonly IMapper _mapper;
+        private readonly ICommentRepository _commentRepository;
+        private readonly ILikeRepository _likeRepository;
 
-        public NewsfeedService(INewsfeedRepository newsfeedRepository, IMapper mapper)
+        public NewsfeedService(INewsfeedRepository newsfeedRepository, IMapper mapper, ICommentRepository commentRepository, ILikeRepository likeRepository)
         {
             _newsfeedRepository = newsfeedRepository;
             _mapper = mapper;
+            _commentRepository = commentRepository;
+            _likeRepository = likeRepository;
         }
 
         public KeyValuePair<MessageViewModel, BlogViewModel?> CreateBlog(CreateBlogRequestModel requestModel)
@@ -56,6 +60,11 @@ namespace BirdClubAPI.BusinessLayer.Services.Newsfeed
                 );
         }
 
+        public bool DeleteBlog(int id)
+        {
+            return _newsfeedRepository.DeleteBlog(id);
+        }
+
         public KeyValuePair<MessageViewModel, BlogViewModel?> GetBlog(int id)
         {
             var blog = _newsfeedRepository.GetBlogs(id);
@@ -83,10 +92,34 @@ namespace BirdClubAPI.BusinessLayer.Services.Newsfeed
 
         }
 
+        public List<BlogViewModel> GetBlogs()
+        {
+            return _newsfeedRepository.GetBlogs();
+        }
+
         public NewsfeedViewModel GetNewsFeed(int memberid)
         {
 
             var newsfeed =_newsfeedRepository.GetNewsFeed(memberid);
+            if (newsfeed != null)
+            {
+                foreach (var item in newsfeed)
+                {
+                    if (item.Blog != null)
+                    {
+                        item.Blog.Comments = item.Blog.Comments.OrderByDescending(e => e.PublicationTime).ToList();
+                        var likes = _likeRepository.GetLikes(item.Id);
+                        item.Blog.LikeCount = likes.Count;
+                        item.Blog.IsLiked = likes.Any(e => e.OwnerId == memberid);
+                    }
+                    if (item.Record != null)
+                    {
+                        var likes = _likeRepository.GetLikes(item.Id);
+                        item.Record.LikeCount = likes.Count;
+                        item.Record.IsLiked = likes.Any(e => e.OwnerId == memberid);
+                    }
+                }
+            }
             var response = new NewsfeedViewModel
             {
                 Total = newsfeed.Count,
@@ -95,20 +128,61 @@ namespace BirdClubAPI.BusinessLayer.Services.Newsfeed
             return response;
         }
 
-        public NewsfeedViewModel GetNewsfeeds(int limit, int page, int size)
+        public NewsfeedViewModel GetNewsfeeds(int page, int size, int? memberId = null)
         {
-            var newsfeeds = _newsfeedRepository.GetNewsfeeds(limit, page, size);
+            var newsfeeds = _newsfeedRepository.GetNewsfeeds(page, size);
+            if (newsfeeds != null)
+            {
+                foreach (var item in newsfeeds)
+                {
+                    if (item.Blog != null)
+                    {
+                        item.Blog.Comments = item.Blog.Comments.OrderByDescending(e => e.PublicationTime).ToList();
+                        var likes = _likeRepository.GetLikes(item.Id);
+                        item.Blog.LikeCount = likes.Count;
+                        item.Blog.IsLiked = memberId != null && likes.Any(e => e.OwnerId == memberId);
+                    }
+                    if (item.Record != null)
+                    {
+                        var likes = _likeRepository.GetLikes(item.Id);
+                        item.Record.LikeCount = likes.Count;
+                        item.Record.IsLiked = memberId != null && likes.Any(e => e.OwnerId == memberId);
+                    }
+                }
+            }
             var response = new NewsfeedViewModel
             {
-                Total = newsfeeds.Count,
+                Total = _newsfeedRepository.GetNewsFeedCount(),
                 Newsfeeds = newsfeeds
             };
             return response;
         }
 
+        public CommentRm? PostComment(NewsfeedCommentRequest request)
+        {
+            var newsfeed = _newsfeedRepository.GetNewsFeedById(request.NewsfeedId);
+            var type = newsfeed?.Blog != null ? "BLOG" : "RECORD";
+            Comment comment = new Comment
+            {
+                Content = request.Content,
+                OwnerId = request.OwnerId,
+                PublicationTime = DateTime.UtcNow.AddHours(7),
+                ReferenceId = request.NewsfeedId,
+                Type = type,
+            };
+            var result = _commentRepository.Create(comment);
+            if (result != null)
+            {
+                return _mapper.Map<CommentRm>(result);
+            } else
+            {
+                throw new InvalidDataException("Create comment fail");
+            }
+        }
+
         public MessageViewModel PostLiked(int memberId, int newsfeedId)
         {
-            var alreadyLiked = _newsfeedRepository.GetBlog(memberId, newsfeedId);
+            var alreadyLiked = _newsfeedRepository.GetLike(memberId, newsfeedId);
             if (alreadyLiked == null)
             {
                 var like = _newsfeedRepository.PostLiked(memberId, newsfeedId);

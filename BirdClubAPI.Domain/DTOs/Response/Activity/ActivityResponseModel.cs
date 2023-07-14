@@ -1,4 +1,5 @@
-﻿using BirdClubAPI.Domain.DTOs.Response.Member;
+﻿using BirdClubAPI.Domain.DTOs.Response.Comment;
+using BirdClubAPI.Domain.DTOs.Response.Member;
 
 namespace BirdClubAPI.Domain.DTOs.Response.Activity
 {
@@ -15,5 +16,8 @@ namespace BirdClubAPI.Domain.DTOs.Response.Activity
         public int Id { get; set; }
         public bool Status { get; set; }
         public string? Background { get; set; }
+        public int? RequestCount { get; set; }
+        public List<CommentRm> Comments { get; set; } = new List<CommentRm>();
+        public int? FeedbackCount { get; set; }
     }
 }

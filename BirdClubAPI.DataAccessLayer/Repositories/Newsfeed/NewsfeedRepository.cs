@@ -1,12 +1,11 @@
 ﻿using AutoMapper;
-using AutoMapper.QueryableExtensions;
 using BirdClubAPI.DataAccessLayer.Context;
 using BirdClubAPI.Domain.DTOs.Response.Blog;
 using BirdClubAPI.Domain.DTOs.Response.Member;
 using BirdClubAPI.Domain.DTOs.Response.Newsfeed;
+using BirdClubAPI.Domain.DTOs.View.Blog;
 using BirdClubAPI.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
 
 namespace BirdClubAPI.DataAccessLayer.Repositories.Newsfeed
 {
@@ -35,9 +34,9 @@ namespace BirdClubAPI.DataAccessLayer.Repositories.Newsfeed
             }
         }
 
-        public Like? GetBlog(int memberId, int newsfeedId)
+        public Domain.Entities.Like? GetLike(int memberId, int newsfeedId)
         {
-            var request = _context.Likes.FirstOrDefault(e => e.Owner.UserId == memberId && e.ReferenceNavigation.NewsfeedId == newsfeedId);
+            var request = _context.Likes.FirstOrDefault(e => e.OwnerId == memberId && e.ReferenceId == newsfeedId && (e.Type == "BLOG" || e.Type == "RECORD"));
             return request;
         }
 
@@ -63,22 +62,31 @@ namespace BirdClubAPI.DataAccessLayer.Repositories.Newsfeed
 
         public List<NewsfeedResponseModel> GetNewsFeed(int memberid)
         {
-            var response = _context.Newsfeeds
+            var response = _mapper.ProjectTo<NewsfeedResponseModel>(_context.Newsfeeds
                 .Where(e => e.OwnerId == memberid)
                 .Include(e => e.Owner)
                     .ThenInclude(e => e.User)
                 .Include(e => e.Blog)
                 .Include(e => e.Record)
-                    .ThenInclude(e => e.Bird)  
-                   .OrderBy(e => e.Id)
+                    .ThenInclude(e => e.Bird)
+                   .OrderByDescending(e => e.PublicationTime))
                 .ToList();
-            return _mapper.Map<List<NewsfeedResponseModel>>(response);
+            return response;
         }
 
-        public List<NewsfeedResponseModel> GetNewsfeeds(int limit, int page, int size)
+        public Domain.Entities.Newsfeed? GetNewsFeedById(int newsfeedId)
+        {
+            return _context.Newsfeeds.Include(e => e.Blog).Include(e => e.Record).SingleOrDefault(e => e.Id == newsfeedId);
+        }
+
+        public int GetNewsFeedCount()
+        {
+            return _context.Newsfeeds.Count();
+        }
+
+        public List<NewsfeedResponseModel> GetNewsfeeds(int page, int size)
         {
             var response = _mapper.ProjectTo<NewsfeedResponseModel>(_context.Newsfeeds
-                .Take(limit > 0 ? limit : int.MaxValue)
                 .Skip(page > 0 ? (page - 1) * size : 0)
                 .Take(size)
                 .OrderByDescending(e => e.PublicationTime)
@@ -92,16 +100,16 @@ namespace BirdClubAPI.DataAccessLayer.Repositories.Newsfeed
             return response;
         }
 
-        public Like? PostLiked(int memberId, int newsfeedId)
+        public Domain.Entities.Like? PostLiked(int memberId, int newsfeedId)
         {
             try
             {
-                var result = _context.Likes.Add(new Like
+                var type = _context.Newsfeeds.Include(e => e.Blog).Include(e => e.Record).SingleOrDefault(e => e.Id == newsfeedId)?.Blog != null ? "BLOG" : "RECORD";
+                var result = _context.Likes.Add(new Domain.Entities.Like
                 {
                     OwnerId = memberId,
                     ReferenceId = newsfeedId,
-                    Type  = "Like"
-                 
+                    Type = type
                 });
                 _context.SaveChanges();
                 return result.Entity;
@@ -112,7 +120,7 @@ namespace BirdClubAPI.DataAccessLayer.Repositories.Newsfeed
             }
         }
 
-        public bool Unliked(Like alreadyLiked)
+        public bool Unliked(Domain.Entities.Like alreadyLiked)
         {
             try
             {
@@ -141,6 +149,30 @@ namespace BirdClubAPI.DataAccessLayer.Repositories.Newsfeed
             }
         }
 
-       
+        public List<BlogViewModel> GetBlogs()
+        {
+            return _context.Newsfeeds
+                .Include(e => e.Owner.User)
+                .Where(e => e.Blog != null)
+                .Select(e => new BlogViewModel
+                {
+                    Id = e.Id,
+                    Content = e.Blog.Content,
+                    Owner = _mapper.Map<MemberResponseModel>(e.Owner),
+                    PublicationTime = e.PublicationTime,
+                    Title = e.Blog.Title
+                }).ToList();
+        }
+
+        public bool DeleteBlog(int id)
+        {
+            var newsfeed = _context.Newsfeeds.FirstOrDefault(e => e.Id == id);
+            var blog = _context.Blogs.FirstOrDefault(e => e.NewsfeedId == id);
+            if (newsfeed == null || blog == null) return false;
+            _context.Blogs.Remove(blog);
+            _context.Newsfeeds.Remove(newsfeed);
+            _context.SaveChanges();
+            return true;
+        }
     }
 }

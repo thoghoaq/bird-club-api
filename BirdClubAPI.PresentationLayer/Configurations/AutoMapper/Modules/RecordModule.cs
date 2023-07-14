@@ -11,6 +11,8 @@ namespace BirdClubAPI.PresentationLayer.Configurations.AutoMapper.Modules
             mc.CreateMap<Record, RecordResponseModel>()
                 .ForMember(dest => dest.BirdName, opts => opts.MapFrom(src => src.Bird.Name))
                 .ForMember(dest => dest.Species, opts => opts.MapFrom(src => src.Bird.Species))
+                .ForMember(dest => dest.LikeCount, otps => otps.Ignore())
+                .ForMember(dest => dest.IsLiked, otps => otps.Ignore())
                 .ReverseMap();
         }
     }

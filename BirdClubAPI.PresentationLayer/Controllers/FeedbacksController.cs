@@ -1,4 +1,5 @@
 ﻿using BirdClubAPI.BusinessLayer.Services.Feedback;
+using BirdClubAPI.Domain.DTOs.Request.Feedback;
 using BirdClubAPI.Domain.DTOs.View.Feedback;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -36,16 +37,16 @@ namespace BirdClubAPI.PresentationLayer.Controllers
         ///// </summary>
         ///// <param name="requestModel"></param>
         ///// <returns></returns>
-        //[HttpPost]
+        [HttpPost]
 
-        //public IActionResult CreateFeedback(CreateFeedbackRequestModel requestModel)
-        //{
-        //    var result = _feedbackService.CreateFeedback(requestModel);
-        //    if (result.Key.StatusCode.Equals(HttpStatusCode.InternalServerError))
-        //    {
-        //        return BadRequest(result.Key);
-        //    }
-        //    return CreatedAtAction("CreateFeedback", result.Value);
-        //}
+        public async Task<IActionResult> CreateFeedback(CreateFeedbackRequestModel requestModel)
+        {
+            var result = await _feedbackService.CreateFeedback(requestModel);
+            if (result.Key.StatusCode.Equals(HttpStatusCode.InternalServerError))
+            {
+                return BadRequest(result.Key);
+            }
+            return CreatedAtAction("CreateFeedback", result.Value);
+        }
     }
 }

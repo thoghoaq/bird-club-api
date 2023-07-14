@@ -1,4 +1,5 @@
-﻿using BirdClubAPI.BusinessLayer.Services.Activity;
+﻿using BirdClubAPI.BusinessLayer.Jobs;
+using BirdClubAPI.BusinessLayer.Services.Activity;
 using BirdClubAPI.BusinessLayer.Services.Auth;
 using BirdClubAPI.BusinessLayer.Services.Bird;
 using BirdClubAPI.BusinessLayer.Services.Feedback;
@@ -8,7 +9,9 @@ using BirdClubAPI.BusinessLayer.Services.Record;
 using BirdClubAPI.DataAccessLayer.Context;
 using BirdClubAPI.DataAccessLayer.Repositories.Activity;
 using BirdClubAPI.DataAccessLayer.Repositories.Bird;
+using BirdClubAPI.DataAccessLayer.Repositories.Comment;
 using BirdClubAPI.DataAccessLayer.Repositories.Feedback;
+using BirdClubAPI.DataAccessLayer.Repositories.Like;
 using BirdClubAPI.DataAccessLayer.Repositories.Member;
 using BirdClubAPI.DataAccessLayer.Repositories.Newsfeed;
 using BirdClubAPI.DataAccessLayer.Repositories.Record;
@@ -45,6 +48,13 @@ namespace BirdClubAPI.Core.DependencyInjection
 
             services.AddScoped<IBirdService, BirdService>();
             services.AddTransient<IBirdRepository, BirdRepository>();
+
+            services.AddTransient<ICommentRepository, CommentRepository>();
+            services.AddTransient<ILikeRepository, LikeRepository>();
+
+            #region Jobs
+            services.AddScoped<IRecurringJobs, RecurringJobs>();
+            #endregion Jobs
 
             return services;
         }
