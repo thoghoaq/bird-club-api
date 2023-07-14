@@ -77,9 +77,9 @@ namespace BirdClubAPI.PresentationLayer.Controllers
         }
 
         [HttpGet("by-member/{memberid}")]
-        public ActionResult <NewsfeedViewModel> GetNewsFeed(int memberid)
+        public ActionResult<NewsfeedViewModel> GetNewsFeed(int memberid)
         {
-            var response = _newsfeedService.GetNewsFeed(memberid);          
+            var response = _newsfeedService.GetNewsFeed(memberid);
             return Ok(response);
         }
         /// <summary>
@@ -88,9 +88,9 @@ namespace BirdClubAPI.PresentationLayer.Controllers
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpPost("like")]
-        public IActionResult PostLiked(LikeRequestModel request)
+        public async Task<IActionResult> PostLiked(LikeRequestModel request)
         {
-            var result = _newsfeedService.PostLiked(request.MemberId, request.NewsFeedId);
+            var result = await _newsfeedService.PostLiked(request.MemberId, request.NewsFeedId);
             if (result.StatusCode.Equals(HttpStatusCode.OK))
             {
                 return Ok(result);
