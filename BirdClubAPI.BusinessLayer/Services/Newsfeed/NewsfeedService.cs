@@ -180,7 +180,7 @@ namespace BirdClubAPI.BusinessLayer.Services.Newsfeed
                     Title = "Newsfeed",
                     Message = $"Some one have comment your newsfeed {request.NewsfeedId}"
                 };
-                await FirebaseHelper.Write(request.OwnerId, notification);
+                await FirebaseHelper.Write(newsfeed.OwnerId, notification);
                 return _mapper.Map<CommentRm>(result);
             } else
             {

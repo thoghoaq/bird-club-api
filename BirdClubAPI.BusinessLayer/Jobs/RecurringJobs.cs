@@ -15,7 +15,7 @@ namespace BirdClubAPI.BusinessLayer.Jobs
 
         public async Task CheckIncomingEvent()
         {
-            var listEvent = _activityRepository.GetActivities().Where(e => e.StartTime.AddHours(-1) > DateTime.Now && e.StartTime.AddHours(-1) < DateTime.Now.AddHours(1)).ToList();
+            var listEvent = _activityRepository.GetActivities().Where(e => e.StartTime.AddHours(-1) > DateTime.Now.AddMinutes(-15) && e.StartTime.AddHours(-1) < DateTime.Now.AddMinutes(15)).ToList();
             Console.WriteLine(listEvent.Count);
             foreach (var element in listEvent)
             {
